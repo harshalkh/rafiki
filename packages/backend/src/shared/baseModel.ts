@@ -1,10 +1,13 @@
 import {
+  Constructor,
   Model,
   ModelOptions,
   Page,
   Pojo,
   QueryBuilder,
-  QueryContext
+  QueryContext,
+  QueryBuilderType,
+  TransactionOrKnex
 } from 'objection'
 import { DbErrors } from 'objection-db-errors'
 import { v4 as uuid } from 'uuid'
@@ -103,6 +106,32 @@ class PaginationQueryBuilder<M extends Model, R = M[]> extends QueryBuilder<
 export class PaginationModel extends DbErrors(Model) {
   QueryBuilderType!: PaginationQueryBuilder<this>
   static QueryBuilder = PaginationQueryBuilder
+}
+
+type ReadOnlyQueryBuilder<M extends Model> = QueryBuilderType<M> & {
+  delete: never
+  deleteById: never
+  update: never
+  updateAndFetch: never
+  updateAndFetchById: never
+  patch: never
+  patchAndFetch: never
+  insert: never
+  insertAndFetch: never
+  insertAndFetchById: never
+  insertGraph: never
+  insertGraphAndFetch: never
+  upsertGraph: never
+  upsertGraphAndFetch: never
+}
+
+export class ViewModel extends PaginationModel {
+  static query<M extends Model>(
+    this: Constructor<M>,
+    trxOrKnex?: TransactionOrKnex
+  ): ReadOnlyQueryBuilder<M> {
+    return super.query<M>(trxOrKnex) as ReadOnlyQueryBuilder<M>
+  }
 }
 
 export abstract class BaseModel extends PaginationModel {
