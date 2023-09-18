@@ -12,7 +12,8 @@ import {
   createAsset,
   updateAssetWithdrawalThreshold,
   getAssetReceivingFee,
-  getAssetSendingFee
+  getAssetSendingFee,
+  getFees
 } from './asset'
 import {
   getPaymentPointerIncomingPayments,
@@ -57,7 +58,8 @@ export const resolvers: Resolvers = {
   Asset: {
     liquidity: getAssetLiquidity,
     sendingFee: getAssetSendingFee,
-    receivingFee: getAssetReceivingFee
+    receivingFee: getAssetReceivingFee,
+    fees: getFees
   },
   Peer: {
     liquidity: getPeerLiquidity
