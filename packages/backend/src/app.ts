@@ -80,6 +80,7 @@ import { FeeService } from './fee/service'
 import { AutoPeeringService } from './auto-peering/service'
 import { AutoPeeringRoutes } from './auto-peering/routes'
 import { Rafiki as ConnectorApp } from './connector/core'
+import { TelemetryService } from './telemetry/meter'
 import { AxiosInstance } from 'axios'
 import { TelemetryService } from './telemetry/meter'
 

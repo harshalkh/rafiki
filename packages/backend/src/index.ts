@@ -133,7 +133,7 @@ export function initIocContainer(
       const config = await deps.use('config')
       return createTelemetryService({
         logger: await deps.use('logger'),
-        serviceName: config.telemetryServiceName,
+        serviceName: 'Rafiki',
         collectorUrl: config.openTelemetryCollectorUrl,
         exportIntervalMillis: config.openTelemetryExportInterval
       })
