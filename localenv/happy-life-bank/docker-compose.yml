@@ -52,8 +52,11 @@ services:
       EXCHANGE_RATES_URL: http://happy-life-bank/rates
       REDIS_URL: redis://shared-redis:6379/1
       PAYMENT_POINTER_URL: https://happy-life-bank-backend/.well-known/pay
+      ENABLE_TELEMETRY: true
+      OPEN_TELEMETRY_COLLECTOR_URL: http://happy-life-otel-collector:4317
     depends_on:
       - cloud-nine-backend
+      - happy-life-otel-collector
   happy-life-auth:
     hostname: happy-life-bank-auth
     image: rafiki-auth
@@ -99,6 +102,19 @@ services:
     depends_on:
       - cloud-nine-admin
       - happy-life-backend
+  happy-life-otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel-collector-config.yaml", ""]
+    volumes:
+      - ../collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "1888:1888"   # pprof extension
+      - "8888:8888"   # Prometheus metrics exposed by the collector
+      - "8889:8889"   # Prometheus exporter metrics
+      - "13133:13133" # health_check extension
+      - "4317:4317"   # OTLP gRPC receiver
+      - "55679:55679" # zpages extension
+      - "4318:4318"
 
 networks:
   rafiki:

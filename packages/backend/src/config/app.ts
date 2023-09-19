@@ -33,7 +33,7 @@ export const Config = {
     'OPEN_TELEMETRY_COLLECTOR_URL',
     'http://otel-collector:4317'
   ),
-  openTelemetryExportInterval: envInt('OPEN_TELEMETRY_EXPORT_INTERVAL', 60000),
+  openTelemetryExportInterval: envInt('OPEN_TELEMETRY_EXPORT_INTERVAL', 10000),
 
   // publicHost is for open payments URLs.
   publicHost: envString('PUBLIC_HOST', 'http://127.0.0.1:3001'),

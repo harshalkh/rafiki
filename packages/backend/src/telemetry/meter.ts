@@ -52,6 +52,8 @@ class TelemetryServiceImpl implements TelemetryService {
     this.createCounter(Metrics.TRANSACTIONS_TOTAL, {
       description: 'Count of funded transactions'
     })
+
+    this.createCounter('test', { description: 'test' })
   }
 
   private createCounter(
