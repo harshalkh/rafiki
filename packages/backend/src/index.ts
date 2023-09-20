@@ -46,6 +46,7 @@ import { createCombinedPaymentService } from './open_payments/payment/combined/s
 import { createFeeService } from './fee/service'
 import { createAutoPeeringService } from './auto-peering/service'
 import { createAutoPeeringRoutes } from './auto-peering/routes'
+import axios from 'axios'
 import { TelemetryService, createTelemetryService } from './telemetry/meter'
 
 BigInt.prototype.toJSON = function () {
@@ -60,6 +61,7 @@ export function initIocContainer(
 ): IocContract<AppServices> {
   const container: IocContract<AppServices> = new Ioc()
   container.singleton('config', async () => config)
+  container.singleton('axios', async () => axios.create())
   container.singleton('logger', async (deps: IocContract<AppServices>) => {
     const config = await deps.use('config')
     const logger = createLogger()
@@ -437,6 +439,7 @@ export function initIocContainer(
 
   container.singleton('autoPeeringService', async (deps) => {
     return createAutoPeeringService({
+      axios: await deps.use('axios'),
       logger: await deps.use('logger'),
       knex: await deps.use('knex'),
       assetService: await deps.use('assetService'),

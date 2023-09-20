@@ -80,6 +80,7 @@ import { FeeService } from './fee/service'
 import { AutoPeeringService } from './auto-peering/service'
 import { AutoPeeringRoutes } from './auto-peering/routes'
 import { Rafiki as ConnectorApp } from './connector/core'
+import { AxiosInstance } from 'axios'
 import { TelemetryService } from './telemetry/meter'
 
 export interface AppContextData {
@@ -191,6 +192,7 @@ export interface AppServices {
   logger: Promise<Logger>
   telemetry: Promise<TelemetryService>
   knex: Promise<Knex>
+  axios: Promise<AxiosInstance>
   config: Promise<IAppConfig>
   httpTokenService: Promise<HttpTokenService>
   assetService: Promise<AssetService>
