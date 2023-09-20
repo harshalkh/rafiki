@@ -14,9 +14,9 @@ import { AppServices } from '../../app'
 import { createAsset } from '../../tests/asset'
 import { createIncomingPayment } from '../../tests/incomingPayment'
 import {
-  createPaymentPointer,
-  MockPaymentPointer
-} from '../../tests/paymentPointer'
+  createWalletAddress,
+  MockWalletAddress
+} from '../../tests/walletAddress'
 import { createQuote } from '../../tests/quote'
 import { truncateTables } from '../../tests/tableManager'
 import { AssetOptions } from '../../asset/service'
@@ -24,8 +24,8 @@ import {
   IncomingPayment,
   IncomingPaymentState
 } from '../payment/incoming/model'
-import { getTests } from '../payment_pointer/model.test'
-import { PaymentPointer } from '../payment_pointer/model'
+import { getTests } from '../wallet_address/model.test'
+import { WalletAddress } from '../wallet_address/model'
 import { Fee, FeeType } from '../../fee/model'
 import { Asset } from '../../asset/model'
 import { withConfigOverride } from '../../tests/helpers'
@@ -35,8 +35,8 @@ describe('QuoteService', (): void => {
   let appContainer: TestContainer
   let quoteService: QuoteService
   let knex: Knex
-  let sendingPaymentPointer: MockPaymentPointer
-  let receivingPaymentPointer: MockPaymentPointer
+  let sendingWalletAddress: MockWalletAddress
+  let receivingWalletAddress: MockWalletAddress
   let config: IAppConfig
 
   const asset: AssetOptions = {
@@ -86,11 +86,11 @@ describe('QuoteService', (): void => {
       code: debitAmount.assetCode,
       scale: debitAmount.assetScale
     })
-    sendingPaymentPointer = await createPaymentPointer(deps, {
+    sendingWalletAddress = await createWalletAddress(deps, {
       assetId: sendAssetId
     })
     const { id: destinationAssetId } = await createAsset(deps, destinationAsset)
-    receivingPaymentPointer = await createPaymentPointer(deps, {
+    receivingWalletAddress = await createWalletAddress(deps, {
       assetId: destinationAssetId,
       mockServerPort: appContainer.openPaymentsPort
     })
@@ -98,7 +98,7 @@ describe('QuoteService', (): void => {
     await expect(
       accountingService.createDeposit({
         id: uuid(),
-        account: receivingPaymentPointer.asset,
+        account: receivingWalletAddress.asset,
         amount: BigInt(123)
       })
     ).resolves.toBeUndefined()
@@ -106,7 +106,7 @@ describe('QuoteService', (): void => {
 
   afterEach(async (): Promise<void> => {
     jest.restoreAllMocks()
-    receivingPaymentPointer.scope?.persist(false)
+    receivingWalletAddress.scope?.persist(false)
     await truncateTables(knex)
   })
 
@@ -114,13 +114,13 @@ describe('QuoteService', (): void => {
     await appContainer.shutdown()
   })
 
-  describe('get/getPaymentPointerPage', (): void => {
+  describe('get/getWalletAddressPage', (): void => {
     getTests({
       createModel: ({ client }) =>
         createQuote(deps, {
-          paymentPointerId: sendingPaymentPointer.id,
+          walletAddressId: sendingWalletAddress.id,
           receiver: `${
-            receivingPaymentPointer.url
+            receivingWalletAddress.url
           }/incoming-payments/${uuid()}`,
           debitAmount: {
             value: BigInt(56),
@@ -132,7 +132,7 @@ describe('QuoteService', (): void => {
           withFee: true
         }),
       get: (options) => quoteService.get(options),
-      list: (options) => quoteService.getPaymentPointerPage(options)
+      list: (options) => quoteService.getWalletAddressPage(options)
     })
   })
 
@@ -160,15 +160,15 @@ describe('QuoteService', (): void => {
 
         beforeEach(async (): Promise<void> => {
           incomingPayment = await createIncomingPayment(deps, {
-            paymentPointerId: receivingPaymentPointer.id,
+            walletAddressId: receivingWalletAddress.id,
             incomingAmount
           })
           const connectionService = await deps.use('connectionService')
           options = {
-            paymentPointerId: sendingPaymentPointer.id,
+            walletAddressId: sendingWalletAddress.id,
             receiver: toConnection
               ? connectionService.getUrl(incomingPayment)
-              : incomingPayment.getUrl(receivingPaymentPointer)
+              : incomingPayment.getUrl(receivingWalletAddress)
           }
           if (debitAmount) options.debitAmount = debitAmount
           if (receiveAmount) options.receiveAmount = receiveAmount
@@ -196,7 +196,7 @@ describe('QuoteService', (): void => {
                 assert.ok(!isQuoteError(quote))
 
                 expect(quote).toMatchObject({
-                  paymentPointerId: sendingPaymentPointer.id,
+                  walletAddressId: sendingWalletAddress.id,
                   receiver: options.receiver,
                   debitAmount: debitAmount || {
                     value: BigInt(
@@ -339,13 +339,13 @@ describe('QuoteService', (): void => {
       'sets expiry date to $description',
       async ({ expiryDate }): Promise<void> => {
         const incomingPayment = await createIncomingPayment(deps, {
-          paymentPointerId: receivingPaymentPointer.id,
+          walletAddressId: receivingWalletAddress.id,
           incomingAmount,
           expiresAt: expiryDate
         })
         const options: CreateQuoteOptions = {
-          paymentPointerId: sendingPaymentPointer.id,
-          receiver: incomingPayment.getUrl(receivingPaymentPointer),
+          walletAddressId: sendingWalletAddress.id,
+          receiver: incomingPayment.getUrl(receivingWalletAddress),
           receiveAmount
         }
 
@@ -355,7 +355,7 @@ describe('QuoteService', (): void => {
           quote.createdAt.getTime() + config.quoteLifespan
         )
         expect(quote).toMatchObject({
-          paymentPointerId: sendingPaymentPointer.id,
+          walletAddressId: sendingWalletAddress.id,
           receiver: options.receiver,
           debitAmount: {
             value: BigInt(
@@ -378,41 +378,41 @@ describe('QuoteService', (): void => {
       }
     )
 
-    it('fails on unknown payment pointer', async (): Promise<void> => {
+    it('fails on unknown wallet address', async (): Promise<void> => {
       await expect(
         quoteService.create({
-          paymentPointerId: uuid(),
+          walletAddressId: uuid(),
           receiver: `${
-            receivingPaymentPointer.url
+            receivingWalletAddress.url
           }/incoming-payments/${uuid()}`,
           debitAmount
         })
-      ).resolves.toEqual(QuoteError.UnknownPaymentPointer)
+      ).resolves.toEqual(QuoteError.UnknownWalletAddress)
     })
 
-    it('fails on inactive payment pointer', async () => {
-      const paymentPointer = await createPaymentPointer(deps)
-      const paymentPointerUpdated = await PaymentPointer.query(
+    it('fails on inactive wallet address', async () => {
+      const walletAddress = await createWalletAddress(deps)
+      const walletAddressUpdated = await WalletAddress.query(
         knex
-      ).patchAndFetchById(paymentPointer.id, { deactivatedAt: new Date() })
-      assert.ok(!paymentPointerUpdated.isActive)
+      ).patchAndFetchById(walletAddress.id, { deactivatedAt: new Date() })
+      assert.ok(!walletAddressUpdated.isActive)
       await expect(
         quoteService.create({
-          paymentPointerId: paymentPointer.id,
+          walletAddressId: walletAddress.id,
           receiver: `${
-            receivingPaymentPointer.url
+            receivingWalletAddress.url
           }/incoming-payments/${uuid()}`,
           debitAmount
         })
-      ).resolves.toEqual(QuoteError.InactivePaymentPointer)
+      ).resolves.toEqual(QuoteError.InactiveWalletAddress)
     })
 
     it('fails on invalid receiver', async (): Promise<void> => {
       await expect(
         quoteService.create({
-          paymentPointerId: sendingPaymentPointer.id,
+          walletAddressId: sendingWalletAddress.id,
           receiver: `${
-            receivingPaymentPointer.url
+            receivingWalletAddress.url
           }/incoming-payments/${uuid()}`,
           debitAmount
         })
@@ -432,11 +432,11 @@ describe('QuoteService', (): void => {
       'fails to create $description',
       async ({ debitAmount, receiveAmount }): Promise<void> => {
         const incomingPayment = await createIncomingPayment(deps, {
-          paymentPointerId: receivingPaymentPointer.id
+          walletAddressId: receivingWalletAddress.id
         })
         const options: CreateQuoteOptions = {
-          paymentPointerId: sendingPaymentPointer.id,
-          receiver: incomingPayment.getUrl(receivingPaymentPointer)
+          walletAddressId: sendingWalletAddress.id,
+          receiver: incomingPayment.getUrl(receivingWalletAddress)
         }
         if (debitAmount) options.debitAmount = debitAmount
         if (receiveAmount) options.receiveAmount = receiveAmount
@@ -448,12 +448,12 @@ describe('QuoteService', (): void => {
 
     it('calls rates service with correct base asset', async (): Promise<void> => {
       const incomingPayment = await createIncomingPayment(deps, {
-        paymentPointerId: receivingPaymentPointer.id,
+        walletAddressId: receivingWalletAddress.id,
         incomingAmount
       })
       const options: CreateQuoteOptions = {
-        paymentPointerId: sendingPaymentPointer.id,
-        receiver: incomingPayment.getUrl(receivingPaymentPointer),
+        walletAddressId: sendingWalletAddress.id,
+        receiver: incomingPayment.getUrl(receivingWalletAddress),
         receiveAmount
       }
 
@@ -464,7 +464,7 @@ describe('QuoteService', (): void => {
       assert.ok(!isQuoteError(quote))
 
       expect(ratesServiceSpy).toHaveBeenCalledWith(
-        sendingPaymentPointer.asset.code
+        sendingWalletAddress.asset.code
       )
     })
 
@@ -474,13 +474,13 @@ describe('QuoteService', (): void => {
         .spyOn(ratesService, 'rates')
         .mockImplementation(() => Promise.reject(new Error('fail')))
       const incomingPayment = await createIncomingPayment(deps, {
-        paymentPointerId: receivingPaymentPointer.id
+        walletAddressId: receivingWalletAddress.id
       })
 
       await expect(
         quoteService.create({
-          paymentPointerId: sendingPaymentPointer.id,
-          receiver: incomingPayment.getUrl(receivingPaymentPointer),
+          walletAddressId: sendingWalletAddress.id,
+          receiver: incomingPayment.getUrl(receivingWalletAddress),
           debitAmount
         })
       ).rejects.toThrow('missing rates')
@@ -488,18 +488,18 @@ describe('QuoteService', (): void => {
 
     describe('fees - fixed delivery', (): void => {
       let asset: Asset
-      let sendingPaymentPointer: PaymentPointer
-      let receivingPaymentPointer: PaymentPointer
+      let sendingWalletAddress: WalletAddress
+      let receivingWalletAddress: WalletAddress
 
       beforeEach(async (): Promise<void> => {
         asset = await createAsset(deps, {
           code: 'USD',
           scale: 2
         })
-        sendingPaymentPointer = await createPaymentPointer(deps, {
+        sendingWalletAddress = await createWalletAddress(deps, {
           assetId: asset.id
         })
-        receivingPaymentPointer = await createPaymentPointer(deps, {
+        receivingWalletAddress = await createWalletAddress(deps, {
           assetId: asset.id
         })
       })
@@ -522,7 +522,7 @@ describe('QuoteService', (): void => {
             expectedQuoteDebitAmountValue
           }): Promise<void> => {
             const incomingPayment = await createIncomingPayment(deps, {
-              paymentPointerId: receivingPaymentPointer.id,
+              walletAddressId: receivingWalletAddress.id,
               incomingAmount: {
                 assetCode: asset.code,
                 assetScale: asset.scale,
@@ -537,8 +537,8 @@ describe('QuoteService', (): void => {
             })
 
             const quote = await quoteService.create({
-              paymentPointerId: sendingPaymentPointer.id,
-              receiver: incomingPayment.getUrl(receivingPaymentPointer)
+              walletAddressId: sendingWalletAddress.id,
+              receiver: incomingPayment.getUrl(receivingWalletAddress)
             })
             assert.ok(!isQuoteError(quote))
 
@@ -555,8 +555,8 @@ describe('QuoteService', (): void => {
     describe('fees - fixed send with cross-currency', (): void => {
       let sendAsset: Asset
       let receiveAsset: Asset
-      let sendingPaymentPointer: PaymentPointer
-      let receivingPaymentPointer: PaymentPointer
+      let sendingWalletAddress: WalletAddress
+      let receivingWalletAddress: WalletAddress
 
       beforeEach(async (): Promise<void> => {
         sendAsset = await createAsset(deps, {
@@ -567,10 +567,10 @@ describe('QuoteService', (): void => {
           code: 'XRP',
           scale: 2
         })
-        sendingPaymentPointer = await createPaymentPointer(deps, {
+        sendingWalletAddress = await createWalletAddress(deps, {
           assetId: sendAsset.id
         })
-        receivingPaymentPointer = await createPaymentPointer(deps, {
+        receivingWalletAddress = await createWalletAddress(deps, {
           assetId: receiveAsset.id
         })
       })
@@ -593,7 +593,7 @@ describe('QuoteService', (): void => {
             expectedReceiveAmountValue
           }): Promise<void> => {
             const incomingPayment = await createIncomingPayment(deps, {
-              paymentPointerId: receivingPaymentPointer.id,
+              walletAddressId: receivingWalletAddress.id,
               incomingAmount: {
                 assetCode: receiveAsset.code,
                 assetScale: receiveAsset.scale,
@@ -608,8 +608,8 @@ describe('QuoteService', (): void => {
             })
 
             const quote = await quoteService.create({
-              paymentPointerId: sendingPaymentPointer.id,
-              receiver: incomingPayment.getUrl(receivingPaymentPointer),
+              walletAddressId: sendingWalletAddress.id,
+              receiver: incomingPayment.getUrl(receivingWalletAddress),
               debitAmount: {
                 value: debitAmountValue,
                 assetCode: sendAsset.code,

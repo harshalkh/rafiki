@@ -8,14 +8,14 @@ import { Amount } from '../amount'
 import { ReceiverService } from '../receiver/service'
 import { Receiver } from '../receiver/model'
 import {
-  PaymentPointer,
+  WalletAddress,
   GetOptions,
   ListOptions
-} from '../payment_pointer/model'
+} from '../wallet_address/model'
 import {
-  PaymentPointerService,
-  PaymentPointerSubresourceService
-} from '../payment_pointer/service'
+  WalletAddressService,
+  WalletAddressSubresourceService
+} from '../wallet_address/service'
 import { RatesService } from '../../rates/service'
 import { IlpPlugin, IlpPluginOptions } from '../../shared/ilp_plugin'
 import { convertRatesToIlpPrices } from '../../rates/util'
@@ -25,7 +25,7 @@ import { IAppConfig } from '../../config/app'
 
 const MAX_INT64 = BigInt('9223372036854775807')
 
-export interface QuoteService extends PaymentPointerSubresourceService<Quote> {
+export interface QuoteService extends WalletAddressSubresourceService<Quote> {
   create(options: CreateQuoteOptions): Promise<Quote | QuoteError>
 }
 
@@ -33,7 +33,7 @@ export interface ServiceDependencies extends BaseService {
   config: IAppConfig
   knex: TransactionOrKnex
   receiverService: ReceiverService
-  paymentPointerService: PaymentPointerService
+  walletAddressService: WalletAddressService
   ratesService: RatesService
   makeIlpPlugin: (options: IlpPluginOptions) => IlpPlugin
   feeService: FeeService
@@ -49,7 +49,7 @@ export async function createQuoteService(
   return {
     get: (options) => getQuote(deps, options),
     create: (options: CreateQuoteOptions) => createQuote(deps, options),
-    getPaymentPointerPage: (options) => getPaymentPointerPage(deps, options)
+    getWalletAddressPage: (options) => getWalletAddressPage(deps, options)
   }
 }
 
@@ -61,7 +61,7 @@ async function getQuote(
 }
 
 interface QuoteOptionsBase {
-  paymentPointerId: string
+  walletAddressId: string
   receiver: string
   client?: string
 }
@@ -87,20 +87,20 @@ async function createQuote(
   if (options.debitAmount && options.receiveAmount) {
     return QuoteError.InvalidAmount
   }
-  const paymentPointer = await deps.paymentPointerService.get(
-    options.paymentPointerId
+  const walletAddress = await deps.walletAddressService.get(
+    options.walletAddressId
   )
-  if (!paymentPointer) {
-    return QuoteError.UnknownPaymentPointer
+  if (!walletAddress) {
+    return QuoteError.UnknownWalletAddress
   }
-  if (!paymentPointer.isActive) {
-    return QuoteError.InactivePaymentPointer
+  if (!walletAddress.isActive) {
+    return QuoteError.InactiveWalletAddress
   }
   if (options.debitAmount) {
     if (
       options.debitAmount.value <= BigInt(0) ||
-      options.debitAmount.assetCode !== paymentPointer.asset.code ||
-      options.debitAmount.assetScale !== paymentPointer.asset.scale
+      options.debitAmount.assetCode !== walletAddress.asset.code ||
+      options.debitAmount.assetScale !== walletAddress.asset.scale
     ) {
       return QuoteError.InvalidAmount
     }
@@ -115,25 +115,25 @@ async function createQuote(
     const receiver = await resolveReceiver(deps, options)
     const ilpQuote = await startQuote(deps, {
       ...options,
-      paymentPointer,
+      walletAddress,
       receiver
     })
 
     const sendingFee = await deps.feeService.getLatestFee(
-      paymentPointer.assetId,
+      walletAddress.assetId,
       FeeType.Sending
     )
 
     return await Quote.transaction(deps.knex, async (trx) => {
       const quote = await Quote.query(trx)
         .insertAndFetch({
-          walletAddressId: options.paymentPointerId,
-          assetId: paymentPointer.assetId,
+          walletAddressId: options.walletAddressId,
+          assetId: walletAddress.assetId,
           receiver: options.receiver,
           debitAmount: {
             value: ilpQuote.maxSourceAmount,
-            assetCode: paymentPointer.asset.code,
-            assetScale: paymentPointer.asset.scale
+            assetCode: walletAddress.asset.code,
+            assetScale: walletAddress.asset.scale
           },
           receiveAmount: {
             value: ilpQuote.minDeliveryAmount,
@@ -216,7 +216,7 @@ export async function resolveReceiver(
 }
 
 export interface StartQuoteOptions {
-  paymentPointer: PaymentPointer
+  walletAddress: WalletAddress
   debitAmount?: Amount
   receiveAmount?: Amount
   receiver: Receiver
@@ -227,13 +227,13 @@ export async function startQuote(
   options: StartQuoteOptions
 ): Promise<Pay.Quote> {
   const rates = await deps.ratesService
-    .rates(options.paymentPointer.asset.code)
+    .rates(options.walletAddress.asset.code)
     .catch((_err: Error) => {
       throw new Error('missing rates')
     })
 
   const plugin = deps.makeIlpPlugin({
-    sourceAccount: options.paymentPointer,
+    sourceAccount: options.walletAddress,
     unfulfillable: true
   })
 
@@ -243,8 +243,8 @@ export async function startQuote(
       plugin,
       destination: options.receiver.toResolvedPayment(),
       sourceAsset: {
-        scale: options.paymentPointer.asset.scale,
-        code: options.paymentPointer.asset.code
+        scale: options.walletAddress.asset.scale,
+        code: options.walletAddress.asset.code
       }
     }
     if (options.debitAmount) {
@@ -350,7 +350,7 @@ async function finalizeQuote(
   return quote
 }
 
-async function getPaymentPointerPage(
+async function getWalletAddressPage(
   deps: ServiceDependencies,
   options: ListOptions
 ): Promise<Quote[]> {

@@ -26,10 +26,10 @@ import { createAccountingService as createPsqlAccountingService } from './accoun
 import { createPeerService } from './peer/service'
 import { createAuthServerService } from './open_payments/authServer/service'
 import { createGrantService } from './open_payments/grant/service'
-import { createPaymentPointerService } from './open_payments/payment_pointer/service'
+import { createWalletAddressService } from './open_payments/wallet_address/service'
 import { createSPSPRoutes } from './spsp/routes'
-import { createPaymentPointerKeyRoutes } from './open_payments/payment_pointer/key/routes'
-import { createPaymentPointerRoutes } from './open_payments/payment_pointer/routes'
+import { createWalletAddressKeyRoutes } from './open_payments/wallet_address/key/routes'
+import { createWalletAddressRoutes } from './open_payments/wallet_address/routes'
 import { createIncomingPaymentRoutes } from './open_payments/payment/incoming/routes'
 import { createIncomingPaymentService } from './open_payments/payment/incoming/service'
 import { StreamServer } from '@interledger/stream-receiver'
@@ -39,7 +39,7 @@ import { createOpenAPI } from '@interledger/openapi'
 import { createAuthenticatedClient as createOpenPaymentsClient } from '@interledger/open-payments'
 import { createConnectionService } from './open_payments/connection/service'
 import { createConnectionRoutes } from './open_payments/connection/routes'
-import { createPaymentPointerKeyService } from './open_payments/payment_pointer/key/service'
+import { createWalletAddressKeyService } from './open_payments/wallet_address/key/service'
 import { createReceiverService } from './open_payments/receiver/service'
 import { createRemoteIncomingPaymentService } from './open_payments/payment/incoming_remote/service'
 import { createCombinedPaymentService } from './open_payments/payment/combined/service'
@@ -139,7 +139,7 @@ export function initIocContainer(
       logger,
       keyId: config.keyId,
       privateKey: config.privateKey,
-      paymentPointerUrl: config.paymentPointerUrl
+      paymentPointerUrl: config.walletAddressUrl
     })
   })
   container.singleton('tokenIntrospectionClient', async (deps) => {
@@ -222,9 +222,9 @@ export function initIocContainer(
       logger: await deps.use('logger')
     })
   })
-  container.singleton('paymentPointerService', async (deps) => {
+  container.singleton('walletAddressService', async (deps) => {
     const logger = await deps.use('logger')
-    return await createPaymentPointerService({
+    return await createWalletAddressService({
       config: await deps.use('config'),
       knex: await deps.use('knex'),
       logger: logger,
@@ -246,7 +246,7 @@ export function initIocContainer(
       logger: await deps.use('logger'),
       knex: await deps.use('knex'),
       accountingService: await deps.use('accountingService'),
-      paymentPointerService: await deps.use('paymentPointerService'),
+      walletAddressService: await deps.use('walletAddressService'),
       config: await deps.use('config')
     })
   })
@@ -267,17 +267,17 @@ export function initIocContainer(
       connectionService: await deps.use('connectionService')
     })
   })
-  container.singleton('paymentPointerRoutes', async (deps) => {
+  container.singleton('walletAddressRoutes', async (deps) => {
     const config = await deps.use('config')
-    return createPaymentPointerRoutes({
+    return createWalletAddressRoutes({
       authServer: config.authServerGrantUrl
     })
   })
-  container.singleton('paymentPointerKeyRoutes', async (deps) => {
-    return createPaymentPointerKeyRoutes({
+  container.singleton('walletAddressKeyRoutes', async (deps) => {
+    return createWalletAddressKeyRoutes({
       config: await deps.use('config'),
-      paymentPointerKeyService: await deps.use('paymentPointerKeyService'),
-      paymentPointerService: await deps.use('paymentPointerService')
+      walletAddressKeyService: await deps.use('walletAddressKeyService'),
+      walletAddressService: await deps.use('walletAddressService')
     })
   })
   container.singleton('connectionService', async (deps) => {
@@ -303,7 +303,7 @@ export function initIocContainer(
       grantService: await deps.use('grantService'),
       incomingPaymentService: await deps.use('incomingPaymentService'),
       openPaymentsUrl: config.openPaymentsUrl,
-      paymentPointerService: await deps.use('paymentPointerService'),
+      walletAddressService: await deps.use('walletAddressService'),
       openPaymentsClient: await deps.use('openPaymentsClient'),
       remoteIncomingPaymentService: await deps.use(
         'remoteIncomingPaymentService'
@@ -320,8 +320,8 @@ export function initIocContainer(
     })
   })
 
-  container.singleton('paymentPointerKeyService', async (deps) => {
-    return createPaymentPointerKeyService({
+  container.singleton('walletAddressKeyService', async (deps) => {
+    return createWalletAddressKeyService({
       logger: await deps.use('logger'),
       knex: await deps.use('knex')
     })
@@ -347,7 +347,7 @@ export function initIocContainer(
       knex: await deps.use('knex'),
       makeIlpPlugin: await deps.use('makeIlpPlugin'),
       receiverService: await deps.use('receiverService'),
-      paymentPointerService: await deps.use('paymentPointerService'),
+      walletAddressService: await deps.use('walletAddressService'),
       ratesService: await deps.use('ratesService'),
       feeService: await deps.use('feeService')
     })
@@ -367,7 +367,7 @@ export function initIocContainer(
       receiverService: await deps.use('receiverService'),
       makeIlpPlugin: await deps.use('makeIlpPlugin'),
       peerService: await deps.use('peerService'),
-      paymentPointerService: await deps.use('paymentPointerService')
+      walletAddressService: await deps.use('walletAddressService')
     })
   })
   container.singleton('outgoingPaymentRoutes', async (deps) => {
@@ -384,7 +384,7 @@ export function initIocContainer(
       logger: await deps.use('logger'),
       redis: await deps.use('redis'),
       accountingService: await deps.use('accountingService'),
-      paymentPointerService: await deps.use('paymentPointerService'),
+      walletAddressService: await deps.use('walletAddressService'),
       incomingPaymentService: await deps.use('incomingPaymentService'),
       peerService: await deps.use('peerService'),
       ratesService: await deps.use('ratesService'),

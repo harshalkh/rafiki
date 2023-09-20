@@ -15,7 +15,7 @@ export type CreateTestQuoteOptions = CreateQuoteOptions & {
 export async function createQuote(
   deps: IocContract<AppServices>,
   {
-    paymentPointerId,
+    walletAddressId,
     receiver: receiverUrl,
     debitAmount,
     receiveAmount,
@@ -24,15 +24,15 @@ export async function createQuote(
     withFee = false
   }: CreateTestQuoteOptions
 ): Promise<Quote> {
-  const paymentPointerService = await deps.use('paymentPointerService')
-  const paymentPointer = await paymentPointerService.get(paymentPointerId)
-  if (!paymentPointer) {
+  const walletAddressService = await deps.use('walletAddressService')
+  const walletAddress = await walletAddressService.get(walletAddressId)
+  if (!walletAddress) {
     throw new Error()
   }
   if (
     debitAmount &&
-    (paymentPointer.asset.code !== debitAmount.assetCode ||
-      paymentPointer.asset.scale !== debitAmount.assetScale)
+    (walletAddress.asset.code !== debitAmount.assetCode ||
+      walletAddress.asset.scale !== debitAmount.assetScale)
   ) {
     throw new Error()
   }
@@ -97,8 +97,8 @@ export async function createQuote(
       value: BigInt(
         Math.ceil(Number(receiveAmount.value) * 2 * (1 + config.slippage))
       ),
-      assetCode: paymentPointer.asset.code,
-      assetScale: paymentPointer.asset.scale
+      assetCode: walletAddress.asset.code,
+      assetScale: walletAddress.asset.scale
     }
   }
 
@@ -110,8 +110,8 @@ export async function createQuote(
 
   return await Quote.query()
     .insertAndFetch({
-      walletAddressId: paymentPointerId,
-      assetId: paymentPointer.assetId,
+      walletAddressId,
+      assetId: walletAddress.assetId,
       receiver: receiverUrl,
       debitAmount,
       receiveAmount,

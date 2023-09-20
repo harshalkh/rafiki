@@ -24,11 +24,11 @@ import {
 } from '../../../accounting/service'
 import { PeerService } from '../../../peer/service'
 import { ReceiverService } from '../../receiver/service'
-import { GetOptions, ListOptions } from '../../payment_pointer/model'
+import { GetOptions, ListOptions } from '../../wallet_address/model'
 import {
-  PaymentPointerService,
-  PaymentPointerSubresourceService
-} from '../../payment_pointer/service'
+  WalletAddressService,
+  WalletAddressSubresourceService
+} from '../../wallet_address/service'
 import { IlpPlugin, IlpPluginOptions } from '../../../shared/ilp_plugin'
 import { sendWebhookEvent } from './lifecycle'
 import * as worker from './worker'
@@ -37,7 +37,7 @@ import { knex } from 'knex'
 import { AccountAlreadyExistsError } from '../../../accounting/errors'
 
 export interface OutgoingPaymentService
-  extends PaymentPointerSubresourceService<OutgoingPayment> {
+  extends WalletAddressSubresourceService<OutgoingPayment> {
   create(
     options: CreateOutgoingPaymentOptions
   ): Promise<OutgoingPayment | OutgoingPaymentError>
@@ -53,7 +53,7 @@ export interface ServiceDependencies extends BaseService {
   receiverService: ReceiverService
   peerService: PeerService
   makeIlpPlugin: (options: IlpPluginOptions) => IlpPlugin
-  paymentPointerService: PaymentPointerService
+  walletAddressService: WalletAddressService
 }
 
 export async function createOutgoingPaymentService(
@@ -69,7 +69,7 @@ export async function createOutgoingPaymentService(
       createOutgoingPayment(deps, options),
     fund: (options) => fundPayment(deps, options),
     processNext: () => worker.processPendingPayment(deps),
-    getPaymentPointerPage: (options) => getPaymentPointerPage(deps, options)
+    getWalletAddressPage: (options) => getWalletAddressPage(deps, options)
   }
 }
 
@@ -85,7 +85,7 @@ async function getOutgoingPayment(
 }
 
 export interface CreateOutgoingPaymentOptions {
-  paymentPointerId: string
+  walletAddressId: string
   quoteId: string
   client?: string
   grant?: Grant
@@ -98,16 +98,16 @@ async function createOutgoingPayment(
   options: CreateOutgoingPaymentOptions
 ): Promise<OutgoingPayment | OutgoingPaymentError> {
   const grantId = options.grant?.id
-  const paymentPointerId = options.paymentPointerId
+  const walletAddressId = options.walletAddressId
   try {
     return await OutgoingPayment.transaction(deps.knex, async (trx) => {
-      const paymentPointer =
-        await deps.paymentPointerService.get(paymentPointerId)
-      if (!paymentPointer) {
-        throw OutgoingPaymentError.UnknownPaymentPointer
+      const walletAddress =
+        await deps.walletAddressService.get(walletAddressId)
+      if (!walletAddress) {
+        throw OutgoingPaymentError.UnknownWalletAddress
       }
-      if (!paymentPointer.isActive) {
-        throw OutgoingPaymentError.InactivePaymentPointer
+      if (!walletAddress.isActive) {
+        throw OutgoingPaymentError.InactiveWalletAddress
       }
 
       if (grantId) {
@@ -121,7 +121,7 @@ async function createOutgoingPayment(
       const payment = await OutgoingPayment.query(trx)
         .insertAndFetch({
           id: options.quoteId,
-          walletAddressId: paymentPointerId,
+          walletAddressId: walletAddressId,
           metadata: options.metadata,
           state: OutgoingPaymentState.Funding,
           client: options.client,
@@ -181,9 +181,9 @@ async function createOutgoingPayment(
       if (err.constraint === 'outgoingpayments_id_foreign') {
         return OutgoingPaymentError.UnknownQuote
       } else if (
-        err.constraint === 'outgoingpayments_paymentpointerid_foreign'
+        err.constraint === 'outgoingpayments_walletaddressid_foreign'
       ) {
-        return OutgoingPaymentError.UnknownPaymentPointer
+        return OutgoingPaymentError.UnknownWalletAddress
       }
     } else if (isOutgoingPaymentError(err)) {
       return err
@@ -393,7 +393,7 @@ async function fundPayment(
   })
 }
 
-async function getPaymentPointerPage(
+async function getWalletAddressPage(
   deps: ServiceDependencies,
   options: ListOptions
 ): Promise<OutgoingPayment[]> {
