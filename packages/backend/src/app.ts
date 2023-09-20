@@ -188,7 +188,7 @@ type ContextType<T> = T extends (
   ? Context
   : never
 
-const PAYMENT_POINTER_PATH = '/:walletAddressPath+'
+const WALLET_ADDRESS_PATH = '/:walletAddressPath+'
 
 export interface AppServices {
   logger: Promise<Logger>
@@ -362,7 +362,7 @@ export class App {
 
     // GET /connections/{id}
     router.get<DefaultState, SPSPConnectionContext>(
-      PAYMENT_POINTER_PATH + '/connections/:id',
+      WALLET_ADDRESS_PATH + '/connections/:id',
       connectionMiddleware,
       spspMiddleware,
       createValidatorMiddleware<ContextType<SPSPConnectionContext>>(
@@ -378,7 +378,7 @@ export class App {
     // POST /incoming-payments
     // Create incoming payment
     router.post<DefaultState, SignedCollectionContext<IncomingCreateBody>>(
-      PAYMENT_POINTER_PATH + '/incoming-payments',
+      WALLET_ADDRESS_PATH + '/incoming-payments',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<
         ContextType<SignedCollectionContext<IncomingCreateBody>>
@@ -397,7 +397,7 @@ export class App {
     // GET /incoming-payments
     // List incoming payments
     router.get<DefaultState, SignedCollectionContext>(
-      PAYMENT_POINTER_PATH + '/incoming-payments',
+      WALLET_ADDRESS_PATH + '/incoming-payments',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedCollectionContext>>(
         resourceServerSpec,
@@ -417,7 +417,7 @@ export class App {
     // POST /outgoing-payment
     // Create outgoing payment
     router.post<DefaultState, SignedCollectionContext<OutgoingCreateBody>>(
-      PAYMENT_POINTER_PATH + '/outgoing-payments',
+      WALLET_ADDRESS_PATH + '/outgoing-payments',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<
         ContextType<SignedCollectionContext<OutgoingCreateBody>>
@@ -436,7 +436,7 @@ export class App {
     // GET /outgoing-payment
     // List outgoing payments
     router.get<DefaultState, SignedCollectionContext>(
-      PAYMENT_POINTER_PATH + '/outgoing-payments',
+      WALLET_ADDRESS_PATH + '/outgoing-payments',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedCollectionContext>>(
         resourceServerSpec,
@@ -456,7 +456,7 @@ export class App {
     // POST /quotes
     // Create quote
     router.post<DefaultState, SignedCollectionContext<QuoteCreateBody>>(
-      PAYMENT_POINTER_PATH + '/quotes',
+      WALLET_ADDRESS_PATH + '/quotes',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<
         ContextType<SignedCollectionContext<QuoteCreateBody>>
@@ -475,7 +475,7 @@ export class App {
     // GET /incoming-payments/{id}
     // Read incoming payment
     router.get<DefaultState, SignedSubresourceContext>(
-      PAYMENT_POINTER_PATH + '/incoming-payments/:id',
+      WALLET_ADDRESS_PATH + '/incoming-payments/:id',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedSubresourceContext>>(
         resourceServerSpec,
@@ -495,7 +495,7 @@ export class App {
     // POST /incoming-payments/{id}/complete
     // Complete incoming payment
     router.post<DefaultState, SignedSubresourceContext>(
-      PAYMENT_POINTER_PATH + '/incoming-payments/:id/complete',
+      WALLET_ADDRESS_PATH + '/incoming-payments/:id/complete',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedSubresourceContext>>(
         resourceServerSpec,
@@ -515,7 +515,7 @@ export class App {
     // GET /outgoing-payments/{id}
     // Read outgoing payment
     router.get<DefaultState, SignedSubresourceContext>(
-      PAYMENT_POINTER_PATH + '/outgoing-payments/:id',
+      WALLET_ADDRESS_PATH + '/outgoing-payments/:id',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedSubresourceContext>>(
         resourceServerSpec,
@@ -535,7 +535,7 @@ export class App {
     // GET /quotes/{id}
     // Read quote
     router.get<DefaultState, SignedSubresourceContext>(
-      PAYMENT_POINTER_PATH + '/quotes/:id',
+      WALLET_ADDRESS_PATH + '/quotes/:id',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<ContextType<SignedSubresourceContext>>(
         resourceServerSpec,
@@ -555,7 +555,7 @@ export class App {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     router.get(
-      PAYMENT_POINTER_PATH + '/jwks.json',
+      WALLET_ADDRESS_PATH + '/jwks.json',
       createWalletAddressMiddleware(),
       createValidatorMiddleware<WalletAddressKeysContext>(resourceServerSpec, {
         path: '/jwks.json',
@@ -570,7 +570,7 @@ export class App {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     router.get(
-      PAYMENT_POINTER_PATH,
+      WALLET_ADDRESS_PATH,
       createWalletAddressMiddleware(),
       spspMiddleware,
       createValidatorMiddleware<WalletAddressContext>(resourceServerSpec, {
