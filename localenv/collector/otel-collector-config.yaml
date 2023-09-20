@@ -2,18 +2,28 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317 
+      http:
+        cors:
+          allowed_origins:
+            - http://*
+            - https://*
 
 exporters:
   prometheusremotewrite:
     endpoint: http://prometheus-host:9090/write
 
+  file:
+  path: ./filename.json
+
 processors:
   batch:
 
 service:
+  telemetry:
+    logs:
+      level: "debug"
   pipelines:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheusremotewrite]
+      exporters: [prometheusremotewrite, file]

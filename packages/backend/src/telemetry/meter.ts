@@ -1,4 +1,11 @@
-import { Counter, MetricOptions, metrics } from '@opentelemetry/api'
+import {
+  Counter,
+  DiagConsoleLogger,
+  DiagLogLevel,
+  MetricOptions,
+  diag,
+  metrics
+} from '@opentelemetry/api'
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'
 import { Resource } from '@opentelemetry/resources'
 import {
@@ -31,17 +38,18 @@ export function createTelemetryService(
 class TelemetryServiceImpl implements TelemetryService {
   private counters = new Map()
   constructor(private deps: TelemetryServiceDependencies) {
+    diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG)
     const meterProvider = new MeterProvider({
-      resource: new Resource({ 'service.name': deps.serviceName || 'Rafiki' })
+      resource: new Resource({ 'service.name': deps.serviceName ?? 'Rafiki' })
     })
 
     const metricExporter = new OTLPMetricExporter({
-      url: deps.collectorUrl || 'http://otel-collector:4317'
+      url: deps.collectorUrl ?? 'http://otel-collector:4317'
     })
 
     const metricReader = new PeriodicExportingMetricReader({
       exporter: metricExporter,
-      exportIntervalMillis: deps.exportIntervalMillis || 60000
+      exportIntervalMillis: deps.exportIntervalMillis ?? 60000
     })
 
     meterProvider.addMetricReader(metricReader)
