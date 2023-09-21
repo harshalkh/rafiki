@@ -510,21 +510,22 @@
 					"response": []
 				},
 				{
-					"name": "Create Payment Pointer",
+					"name": "Create Wallet Address",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
+								"id": "dfb6c98c-9a4b-4466-85d9-84a81e24a966",
 								"exec": [
 									"const body = pm.response.json();",
 									"",
-									"pm.collectionVariables.set(\"paymentPointerId\", body.data.createPaymentPointer.paymentPointer.id);",
-									"pm.expect(pm.collectionVariables.get(\"paymentPointerId\")).to.be.a('string');",
+									"pm.collectionVariables.set(\"walletAddressId\", body.data.createWalletAddress.walletAddres.id);",
+									"pm.expect(pm.collectionVariables.get(\"walletAddressId\")).to.be.a('string');",
 									"",
-									"pm.collectionVariables.set(\"paymentPointerUrl\", body.data.createPaymentPointer.paymentPointer.url);",
-									"pm.expect(pm.collectionVariables.get(\"paymentPointerUrl\")).to.be.a('string');",
+									"pm.collectionVariables.set(\"walletAddressUrl\", body.data.createWalletAddress.walletAddress.url);",
+									"pm.expect(pm.collectionVariables.get(\"walletAddresUrl\")).to.be.a('string');",
 									"",
-									"pm.collectionVariables.set(\"createPaymentPointerRequest\", pm.request);"
+									"pm.collectionVariables.set(\"createWalletAddressRequest\", pm.request);"
 								],
 								"type": "text/javascript"
 							}
@@ -532,6 +533,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
+								"id": "941a61ee-9dd1-4c7c-a351-b67f96436970",
 								"exec": [
 									""
 								],
@@ -549,7 +551,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreatePaymentPointer($input: CreatePaymentPointerInput!) {\n  createPaymentPointer(input: $input) {\n    code\n    success\n    message\n    paymentPointer {\n      id\n      createdAt\n      publicName\n      url\n      status\n      asset {\n        code\n        createdAt\n        id\n        scale\n        withdrawalThreshold\n      }\n    }\n  }\n}",
+								"query": "mutation CreateWalletAddres($input: CreateWalletAddressInput!) {\n  createWalletAddress(input: $input) {\n    code\n    success\n    message\n    walletAddress {\n      id\n      createdAt\n      publicName\n      url\n      status\n      asset {\n        code\n        createdAt\n        id\n        scale\n        withdrawalThreshold\n      }\n    }\n  }\n}",
 								"variables": "{\n  \"input\": {\n    \"assetId\": \"{{assetId}}\",\n    \"url\": \"https://{{OpenPaymentsHost}}/timon/{{$randomInt}}\",\n    \"publicName\": \"Timon\"\n  }\n}"
 							}
 						},
@@ -566,7 +568,7 @@
 					"response": []
 				},
 				{
-					"name": "Update Payment Pointer",
+					"name": "Update Wallet Address",
 					"id": "3ec1c9ca-4d14-4fe1-bbf7-d71be8e9454d",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -577,8 +579,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation UpdatePaymentPointer($input: UpdatePaymentPointerInput!) {\n    updatePaymentPointer(input: $input) {\n        code\n        message\n        paymentPointer {\n            id\n            asset {\n                id\n                code\n                scale\n                withdrawalThreshold\n                createdAt\n            }\n            url\n            publicName\n            createdAt\n            status\n        }\n        success\n    }\n}",
-								"variables": "{\n  \"input\": {\n    \"id\": \"{{paymentPointerId}}\",\n    \"publicName\": \"New Name\",\n    \"status\": \"ACTIVE\"\n  }\n}"
+								"query": "mutation UpdateWalletAddress($input: UpdateWalletAddressInput!) {\n    updateWalletAddress(input: $input) {\n        code\n        message\n        walletAddress {\n            id\n            asset {\n                id\n                code\n                scale\n                withdrawalThreshold\n                createdAt\n            }\n            url\n            publicName\n            createdAt\n            status\n        }\n        success\n    }\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"{{walletAddressId}}\",\n    \"publicName\": \"New Name\",\n    \"status\": \"ACTIVE\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -594,7 +596,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Payment Pointer",
+					"name": "Get Wallet Address",
 					"id": "a2807507-b39a-498b-b2ec-514b53706a00",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -605,8 +607,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetPaymentPointer($id: String!) {\n    paymentPointer(id: $id) {\n        id\n        asset {\n            id\n            code\n            scale\n            withdrawalThreshold\n            createdAt\n        }\n        createdAt\n        incomingPayments {\n            edges {\n                node {\n                    id\n                    state\n                    incomingAmount {\n                        value\n                    }\n                    receivedAmount {\n                        value\n                    }\n                }\n                cursor\n            }\n            pageInfo {\n                endCursor\n                hasNextPage\n                hasPreviousPage\n                startCursor\n            }\n        }\n        status\n    }\n}",
-								"variables": "{\n    \"id\": \"{{paymentPointerId}}\"\n}"
+								"query": "query GetWalletAddress($id: String!) {\n    walletAddress(id: $id) {\n        id\n        asset {\n            id\n            code\n            scale\n            withdrawalThreshold\n            createdAt\n        }\n        createdAt\n        incomingPayments {\n            edges {\n                node {\n                    id\n                    state\n                    incomingAmount {\n                        value\n                    }\n                    receivedAmount {\n                        value\n                    }\n                }\n                cursor\n            }\n            pageInfo {\n                endCursor\n                hasNextPage\n                hasPreviousPage\n                startCursor\n            }\n        }\n        status\n    }\n}",
+								"variables": "{\n    \"id\": \"{{walletAddressId}}\"\n}"
 							}
 						},
 						"url": {
@@ -622,7 +624,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Payment Pointers",
+					"name": "Get Wallet Addresses",
 					"id": "6d83b6a9-dd1d-40a7-a774-32747c7d9938",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -633,7 +635,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetPaymentPointers {\n    paymentPointers {\n        edges {\n            cursor\n            node {\n                id\n                publicName\n                url\n            }\n        }\n    }\n}",
+								"query": "query GetWalletAddresses {\n    walletAddresses {\n        edges {\n            cursor\n            node {\n                id\n                publicName\n                url\n            }\n        }\n    }\n}",
 								"variables": ""
 							}
 						},
@@ -650,15 +652,16 @@
 					"response": []
 				},
 				{
-					"name": "Create Payment Pointer Key",
+					"name": "Create Wallet Address Key",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
+								"id": "dfd63ef9-5ff6-4ec9-a296-9ddf249cd1f1",
 								"exec": [
 									"const body = pm.response.json();",
 									"",
-									"pm.collectionVariables.set(\"paymentPointerKeyId\", body.data.createPaymentPointerKey.paymentPointerKey.id);"
+									"pm.collectionVariables.set(\"walletAddressKeyId\", body.data.createWalletAddressKey.walletAddressKey.id);"
 								],
 								"type": "text/javascript"
 							}
@@ -674,8 +677,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreatePaymentPointerKey ($input: CreatePaymentPointerKeyInput!) {\n    createPaymentPointerKey(input: $input) {\n        code\n        message\n        success\n        paymentPointerKey {\n            id\n            revoked\n            paymentPointerId\n            createdAt\n            jwk {\n                alg\n                crv\n                kid\n                kty\n                x\n            }\n        }\n    }\n}",
-								"variables": "{\n    \"input\": {\n        \"paymentPointerId\": \"{{paymentPointerId}}\",\n        \"jwk\": {\n            \"alg\": \"EdDSA\",\n            \"crv\": \"Ed25519\",\n            \"kid\": \"kid_dad93e7f-f40b-484d-99d2-df12c8523176\",\n            \"kty\": \"OKP\", \n            \"x\": \"ubqoInifJ5sssIPPnQR1gVPfmoZnJtPhTkyMXNoJF_8\"\n        }\n    }\n}"
+								"query": "mutation CreateWalletAddressKey ($input: CreateWalletAddressKeyInput!) {\n    createWalletAddressKey(input: $input) {\n        code\n        message\n        success\n        walletAddressKey {\n            id\n            revoked\n            walletAddressId\n            createdAt\n            jwk {\n                alg\n                crv\n                kid\n                kty\n                x\n            }\n        }\n    }\n}",
+								"variables": "{\n    \"input\": {\n        \"walletAddresId\": \"{{walletAddressId}}\",\n        \"jwk\": {\n            \"alg\": \"EdDSA\",\n            \"crv\": \"Ed25519\",\n            \"kid\": \"kid_dad93e7f-f40b-484d-99d2-df12c8523176\",\n            \"kty\": \"OKP\", \n            \"x\": \"ubqoInifJ5sssIPPnQR1gVPfmoZnJtPhTkyMXNoJF_8\"\n        }\n    }\n}"
 							}
 						},
 						"url": {
@@ -691,7 +694,7 @@
 					"response": []
 				},
 				{
-					"name": "Revoke Payment Pointer Key",
+					"name": "Revoke Wallet Address Key",
 					"id": "15b344d9-16c7-40ee-96c4-0b8beb1667b2",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -702,8 +705,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation RevokePaymentPointerKey ($input: RevokePaymentPointerKeyInput!) {\n    revokePaymentPointerKey (input: $input) {\n        code\n        message\n        success\n        paymentPointerKey {\n            id\n            revoked\n            paymentPointerId\n            createdAt\n        }\n    }\n}",
-								"variables": "{\n    \"input\": {\n        \"id\": \"{{paymentPointerKeyId}}\"\n    }\n}"
+								"query": "mutation RevokeWalletAddressKey ($input: RevokeWalletAddressKeyInput!) {\n    revokeWalletAddressKey (input: $input) {\n        code\n        message\n        success\n        walletAddressKey {\n            id\n            revoked\n            walletAddressId\n            createdAt\n        }\n    }\n}",
+								"variables": "{\n    \"input\": {\n        \"id\": \"{{walletAddressKeyId}}\"\n    }\n}"
 							}
 						},
 						"url": {
@@ -724,6 +727,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "b3d3cc11-7018-45af-b937-97b4f4eaa716",
 								"exec": [
 									"const body = pm.response.json();",
 									"",
@@ -744,8 +748,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreateIncomingPayment ($input: CreateIncomingPaymentInput!) {\n    createIncomingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      paymentPointerId\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n    }\n    success\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"expiresAt\": null,\n    \"metadata\": {\n        \"externalRef\": null, \n        \"description\": \"Hello World\"\n    },\n    \"incomingAmount\": null,\n    \"paymentPointerId\": \"{{paymentPointerId}}\"\n  }\n}"
+								"query": "mutation CreateIncomingPayment ($input: CreateIncomingPaymentInput!) {\n    createIncomingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      walletAddressId\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n    }\n    success\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"expiresAt\": null,\n    \"metadata\": {\n        \"externalRef\": null, \n        \"description\": \"Hello World\"\n    },\n    \"incomingAmount\": null,\n    \"walletAddressId\": \"{{walletAddressId}}\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -772,8 +776,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      paymentPointerUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"expiresAt\": null,\n    \"metadata\": {\n        \"description\": \"Hello my friend\",\n        \"externalRef\": null\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 2,\n      \"value\": 100\n    },\n    \"paymentPointerUrl\": \"http://peer-backend/accounts/pfry\"\n  }\n}"
+								"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      walletAddressUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"expiresAt\": null,\n    \"metadata\": {\n        \"description\": \"Hello my friend\",\n        \"externalRef\": null\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 2,\n      \"value\": 100\n    },\n    \"walletAddressUrl\": \"http://peer-backend/accounts/pfry\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -809,12 +813,12 @@
 							"script": {
 								"id": "63c84a58-3a85-44dd-86cf-8446e0afce8c",
 								"exec": [
-									"// Create an additional payment pointer to represent the account that will be sending money",
+									"// Create an additional wallet address to represent the account that will be sending money",
 									"",
-									"// Reset the uniquePaymentPointer value",
-									"pm.collectionVariables.set(\"uniquePaymentPointer\", Math.floor(Math.random() * (1001)));",
+									"// Reset the uniqueWalletAddress value",
+									"pm.collectionVariables.set(\"uniqueWalletAddress\", Math.floor(Math.random() * (1001)));",
 									"",
-									"const initialRequest = pm.collectionVariables.get(\"createPaymentPointerRequest\");",
+									"const initialRequest = pm.collectionVariables.get(\"createWalletAddressRequest\");",
 									"",
 									"const postRequest = {",
 									"  url: initialRequest.url,",
@@ -826,7 +830,7 @@
 									"        variables: JSON.stringify({",
 									"            \"input\": {",
 									"                \"assetId\": pm.collectionVariables.get(\"assetId\"),",
-									"                \"url\": \"https://\" + pm.collectionVariables.get(\"OpenPaymentsHost\") + \"/simon/\" + pm.collectionVariables.get(\"uniquePaymentPointer\"),",
+									"                \"url\": \"https://\" + pm.collectionVariables.get(\"OpenPaymentsHost\") + \"/simon/\" + pm.collectionVariables.get(\"uniqueWalletAddress\"),",
 									"                \"publicName\": \"Simon\"",
 									"            }",
 									"        })",
@@ -841,10 +845,10 @@
 									"    const body = response.json();",
 									"    pm.test('response should be okay to process', () => {",
 									"        pm.expect(error).to.equal(null);",
-									"        pm.expect(body.data.createPaymentPointer.code).to.equal('200');",
-									"        pm.expect(body.data.createPaymentPointer.success).to.equal(true);",
+									"        pm.expect(body.data.createWalletAddress.code).to.equal('200');",
+									"        pm.expect(body.data.createWalletAddress.success).to.equal(true);",
 									"    });",
-									"    pm.collectionVariables.set(\"secondPaymentPointerId\", body.data.createPaymentPointer.paymentPointer.id);",
+									"    pm.collectionVariables.set(\"secondWalletAddressId\", body.data.createWalletAddress.walletAddres.id);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -861,8 +865,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"paymentPointerId\": \"{{secondPaymentPointerId}}\",\n    \"receiveAmount\": null,\n    \"receiver\": \"{{paymentPointerUrl}}/incoming-payments/{{incomingPaymentId}}\",\n    \"debitAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 4,\n      \"value\": 50000\n    }\n  }\n}"
+								"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"walletAddressId\": \"{{secondwalletAddressId}}\",\n    \"receiveAmount\": null,\n    \"receiver\": \"{{walletAddressUrl}}/incoming-payments/{{incomingPaymentId}}\",\n    \"debitAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 4,\n      \"value\": 50000\n    }\n  }\n}"
 							}
 						},
 						"url": {
@@ -889,7 +893,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetQuote($id: String!) {\n    quote(id: $id) {\n        createdAt\n        highEstimatedExchangeRate\n        expiresAt\n        id\n        lowEstimatedExchangeRate\n        maxPacketAmount\n        minExchangeRate\n        paymentPointerId\n        receiveAmount {\n            assetCode\n            assetScale\n            value\n        }\n        receiver\n        debitAmount {\n            assetCode\n            assetScale\n            value\n        }\n    }\n}",
+								"query": "query GetQuote($id: String!) {\n    quote(id: $id) {\n        createdAt\n        highEstimatedExchangeRate\n        expiresAt\n        id\n        lowEstimatedExchangeRate\n        maxPacketAmount\n        minExchangeRate\n        walletAddressId\n        receiveAmount {\n            assetCode\n            assetScale\n            value\n        }\n        receiver\n        debitAmount {\n            assetCode\n            assetScale\n            value\n        }\n    }\n}",
 								"variables": "{\n    \"id\": \"{{quoteId}}\"\n}"
 							}
 						},
@@ -932,8 +936,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      paymentPointerId\n      quote {\n        createdAt\n        expiresAt\n        highEstimatedExchangeRate\n        id\n        lowEstimatedExchangeRate\n        maxPacketAmount\n        minExchangeRate\n        paymentPointerId\n        receiveAmount {\n          assetCode\n          assetScale\n          value\n        }\n        receiver\n        debitAmount {\n          assetCode\n          assetScale\n          value\n        }\n      }\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": null,\n        \"externalRef\": null\n    },\n    \"paymentPointerId\": \"{{secondPaymentPointerId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
+								"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      walletAddressId\n      quote {\n        createdAt\n        expiresAt\n        highEstimatedExchangeRate\n        id\n        lowEstimatedExchangeRate\n        maxPacketAmount\n        minExchangeRate\n        walletAddressId\n        receiveAmount {\n          assetCode\n          assetScale\n          value\n        }\n        receiver\n        debitAmount {\n          assetCode\n          assetScale\n          value\n        }\n      }\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": null,\n        \"externalRef\": null\n    },\n    \"walletAddressId\": \"{{secondWalletAddressId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -960,7 +964,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    paymentPointerId\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
+								"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    walletAddressId\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
 								"variables": "{\n    \"id\": \"{{outgoingPaymentId}}\"\n}"
 							}
 						},
@@ -988,7 +992,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query GetIncomingPayment($id: String!) {\nincomingPayment(id: $id) {\n    id\n    paymentPointerId\n    state\n    expiresAt\n    incomingAmount {\n        value\n        assetCode\n        assetScale\n    }\n    receivedAmount {\n        value\n        assetCode\n        assetScale\n    }\n    metadata\n    createdAt\n  }\n}",
+								"query": "query GetIncomingPayment($id: String!) {\nincomingPayment(id: $id) {\n    id\n    walletAddressId\n    state\n    expiresAt\n    incomingAmount {\n        value\n        assetCode\n        assetScale\n    }\n    receivedAmount {\n        value\n        assetCode\n        assetScale\n    }\n    metadata\n    createdAt\n  }\n}",
 								"variables": "{\n    \"id\": \"{{incomingPaymentId}}\"\n}"
 							}
 						},
@@ -1016,8 +1020,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "query Payments($filter: PaymentFilter) {\n    payments(filter: $filter) {\n        edges {\n        node {\n            id\n            type\n            paymentPointerId\n            state\n            metadata\n            createdAt\n        }\n        cursor\n        }\n    }\n}",
-								"variables": "{          \n    \"filter\": {\n        \"type\": {\n            \"in\": [\"OUTGOING\"]\n        },\n        \"paymentPointerId\": {\n           \"in\": [{{secondPaymentPointerId}}]\n        }\n    }\n}"
+								"query": "query Payments($filter: PaymentFilter) {\n    payments(filter: $filter) {\n        edges {\n        node {\n            id\n            type\n            walletAddressId\n            state\n            metadata\n            createdAt\n        }\n        cursor\n        }\n    }\n}",
+								"variables": "{          \n    \"filter\": {\n        \"type\": {\n            \"in\": [\"OUTGOING\"]\n        },\n        \"walletAddressId\": {\n           \"in\": [{{secondWalletAddressId}}]\n        }\n    }\n}"
 							}
 						},
 						"url": {
@@ -1089,7 +1093,7 @@
 					"response": []
 				},
 				{
-					"name": "Create Payment Pointer Withdrawal",
+					"name": "Create Wallet Address Withdrawal",
 					"id": "84fcddb6-efbf-43d6-a8c6-d3ea8c1bdc40",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -1100,8 +1104,8 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation CreatePaymentPointerWithdrawal($input: CreatePaymentPointerWithdrawalInput!) {\n  createPaymentPointerWithdrawal(input: $input) {\n    code\n    error\n    message\n    success\n    withdrawal {\n      amount\n      id\n      paymentPointer {\n        id\n        url\n        asset {\n          id\n          code\n          scale\n          withdrawalThreshold\n        }\n      }\n    }\n  }\n}",
-								"variables": "{\n  \"input\": {\n    \"id\": \"02ac56f7-ae5d-4abb-8306-17bf2327b43c\",\n    \"paymentPointerId\": \"{{incomingPaymentId}}\",\n    \"idempotencyKey\":\"{{$guid}}\"\n  }\n}"
+								"query": "mutation CreateWalletAddressWithdrawal($input: CreateWalletAddressWithdrawalInput!) {\n  createWalletAddressWithdrawal(input: $input) {\n    code\n    error\n    message\n    success\n    withdrawal {\n      amount\n      id\n      walletAddress {\n        id\n        url\n        asset {\n          id\n          code\n          scale\n          withdrawalThreshold\n        }\n      }\n    }\n  }\n}",
+								"variables": "{\n  \"input\": {\n    \"id\": \"02ac56f7-ae5d-4abb-8306-17bf2327b43c\",\n    \"walletAddressId\": \"{{incomingPaymentId}}\",\n    \"idempotencyKey\":\"{{$guid}}\"\n  }\n}"
 							}
 						},
 						"url": {
@@ -1117,7 +1121,7 @@
 					"response": []
 				},
 				{
-					"name": "Trigger Payment Pointer Events",
+					"name": "Trigger Wallet Address Events",
 					"id": "9d7a602e-6025-475a-a4f4-13d99936fb74",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -1128,7 +1132,7 @@
 						"body": {
 							"mode": "graphql",
 							"graphql": {
-								"query": "mutation TriggerPaymentPointerEvents($input: TriggerPaymentPointerEventsInput!) {\n  triggerPaymentPointerEvents(input: $input) {\n    code\n    count\n    message\n    success\n  }\n}",
+								"query": "mutation TriggerWalletAddressEvents($input: TriggerWalletAddressEventsInput!) {\n  triggerWalletAddressEvents(input: $input) {\n    code\n    count\n    message\n    success\n  }\n}",
 								"variables": "{\n    \"input\": {\n        \"limit\": 5\n    }\n}"
 							}
 						},
@@ -1269,14 +1273,15 @@
 			"name": "Open Payments APIs",
 			"item": [
 				{
-					"name": "Payment Pointer",
+					"name": "Wallet Address",
 					"item": [
 						{
-							"name": "Get a Payment Pointer",
+							"name": "Get a Wallet Address",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
+										"id": "f5627645-e740-4b3a-b468-754aaf6801e9",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1304,7 +1309,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:4000/accounts/paaaa",
+									"raw": "http://localhost:4000/accounts/pfry",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1312,18 +1317,19 @@
 									"port": "4000",
 									"path": [
 										"accounts",
-										"paaaa"
+										"pfry"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get a Payment Pointer Copy",
+							"name": "Get a Wallet Address Copy",
 							"event": [
 								{
 									"listen": "test",
 									"script": {
+										"id": "05bdb255-59dd-4d13-a4c9-dfbae3fb16c3",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1351,7 +1357,7 @@
 									}
 								],
 								"url": {
-									"raw": "http://localhost:4000/accounts/paaaa",
+									"raw": "http://localhost:4000/accounts/pfry",
 									"protocol": "http",
 									"host": [
 										"localhost"
@@ -1359,14 +1365,14 @@
 									"port": "4000",
 									"path": [
 										"accounts",
-										"paaaa"
+										"pfry"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Get Payment Pointer Keys",
+							"name": "Get Wallet Address Keys",
 							"id": "841e3c01-87b1-4f6b-b750-d3c85130aa56",
 							"protocolProfileBehavior": {
 								"disableBodyPruning": true
@@ -1380,12 +1386,13 @@
 									}
 								],
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/jwks.json",
+									"raw": "{{pfryWalletAddress}}/jwks.json/",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
-										"jwks.json"
+										"jwks.json",
+										""
 									]
 								}
 							},
@@ -1436,6 +1443,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "c5f2b20d-be95-498e-a6b6-f7d65afb881a",
 										"exec": [
 											"pm.collectionVariables.set(\"tomorrow\", (new Date(new Date().setDate(new Date().getDate() + 1))).toISOString());",
 											"",
@@ -1447,6 +1455,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "fc0381f0-4117-4a46-b735-807c7dd5607c",
 										"exec": [
 											"pm.test(\"Status code is 201\", function () {",
 											"    pm.response.to.have.status(201);",
@@ -1487,9 +1496,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/incoming-payments",
+									"raw": "{{pfryWalletAddress}}/incoming-payments",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
 										"incoming-payments"
@@ -1504,6 +1513,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "e853d258-6fb8-49e1-9182-fbe40eb48f7b",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1516,6 +1526,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "3a11089c-d4ae-4d23-b628-7380225cbc57",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1540,9 +1551,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/incoming-payments/{{incomingPaymentId}}",
+									"raw": "{{pfryWalletAddress}}/incoming-payments/{{incomingPaymentId}}",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
 										"incoming-payments",
@@ -1558,6 +1569,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "cb9b0f51-0831-45ca-bf1f-58c4aa15597a",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1570,6 +1582,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "18e35ec2-ef55-4cea-b7ad-34eabb4192d6",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1594,9 +1607,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/incoming-payments?first=10",
+									"raw": "{{pfryWalletAddress}}/incoming-payments?first=10",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
 										"incoming-payments"
@@ -1622,6 +1635,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "f7507c23-6196-45a6-ba0e-9e462b6e9f60",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1646,9 +1660,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/incoming-payments/{{incomingPaymentId}}/complete",
+									"raw": "{{pfryWalletAddress}}/incoming-payments/{{incomingPaymentId}}/complete",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
 										"incoming-payments",
@@ -1721,9 +1735,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/quotes",
+									"raw": "{{gfranklinWalletAddress}}/quotes",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"quotes"
@@ -1738,6 +1752,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "11ace527-32b4-4030-b62f-005e4d4ab313",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1750,6 +1765,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "eaff467a-b5d6-437d-a68b-54ca780a34b5",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1774,9 +1790,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/quotes/{{quoteId}}",
+									"raw": "{{gfranklinWalletAddress}}/quotes/{{quoteId}}",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"quotes",
@@ -1798,6 +1814,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "5e22d09d-9d75-4f46-b688-93b54876d853",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1807,6 +1824,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "17f82eb2-2022-4930-a6ee-55a78f598837",
 										"exec": [
 											"pm.test(\"Status code is 201\", function () {",
 											"    pm.response.to.have.status(201);",
@@ -1838,7 +1856,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"quoteId\": \"{{gfranklinPaymentPointer}}/quotes/{{quoteId}}\",\n    \"description\": \"yolo\",\n    \"externalRef\": \"INV-001\"\n}",
+									"raw": "{\n    \"quoteId\": \"{{gfranklinWalletAddress}}/quotes/{{quoteId}}\",\n    \"description\": \"yolo\",\n    \"externalRef\": \"INV-001\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1846,9 +1864,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/outgoing-payments",
+									"raw": "{{gfranklinWalletAddress}}/outgoing-payments",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"outgoing-payments"
@@ -1863,6 +1881,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "53c8959f-155c-4935-b552-ade1df251caa",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1875,6 +1894,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "46955943-5520-41ca-876a-49621e987f8c",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1899,9 +1919,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/outgoing-payments/{{outgoingPaymentId}}",
+									"raw": "{{gfranklinWalletAddress}}/outgoing-payments/{{outgoingPaymentId}}",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"outgoing-payments",
@@ -1917,6 +1937,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "02c91e57-9b4c-491e-b6ee-d56dfdd98e7b",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -1929,6 +1950,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "1dc80187-1b4e-4b48-9230-df2365c51ad6",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -1953,9 +1975,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/outgoing-payments?first=2",
+									"raw": "{{gfranklinWalletAddress}}/outgoing-payments?first=2",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"outgoing-payments"
@@ -2264,6 +2286,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "e49424e6-1c9d-4d6f-945b-6815a26e10f1",
 										"exec": [
 											"pm.collectionVariables.set(\"tomorrow\", (new Date(new Date().setDate(new Date().getDate() + 1))).toISOString());",
 											"",
@@ -2275,6 +2298,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "cdca6322-8ee4-43bf-af4d-03a8f7cd301d",
 										"exec": [
 											"pm.test(\"Status code is 201\", function () {",
 											"    pm.response.to.have.status(201);",
@@ -2314,9 +2338,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{pfryPaymentPointer}}/incoming-payments",
+									"raw": "{{pfryWalletAddress}}/incoming-payments",
 									"host": [
-										"{{pfryPaymentPointer}}"
+										"{{pfryWalletAddress}}"
 									],
 									"path": [
 										"incoming-payments"
@@ -2437,9 +2461,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/quotes",
+									"raw": "{{gfranklinWalletAddress}}/quotes",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"quotes"
@@ -2568,6 +2592,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "e16f40af-dcde-49de-a84f-a8add0dcb17b",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -2577,6 +2602,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "718f61de-24d0-4b00-be9d-f7496adaa1e4",
 										"exec": [
 											"pm.test(\"Status code is 201\", function () {",
 											"    pm.response.to.have.status(201);",
@@ -2608,7 +2634,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"quoteId\": \"{{gfranklinPaymentPointer}}/quotes/{{quoteId}}\",\n    \"metadata\": {\n        \"description\": \"Your purchase at Shoe Shop\",\n        \"externalRef\": \"#INV2022-8363828\",\n        \"items\": [1,2,3,4]\n    }\n}",
+									"raw": "{\n    \"quoteId\": \"{{gfranklinWalletAddress}}/quotes/{{quoteId}}\",\n    \"metadata\": {\n        \"description\": \"Your purchase at Shoe Shop\",\n        \"externalRef\": \"#INV2022-8363828\",\n        \"items\": [1,2,3,4]\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -2616,9 +2642,9 @@
 									}
 								},
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/outgoing-payments",
+									"raw": "{{gfranklinWalletAddress}}/outgoing-payments",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"outgoing-payments"
@@ -2633,6 +2659,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "ba55e6b3-02db-4875-ab24-65d1fed885ed",
 										"exec": [
 											"pm.test(\"Status code is 200\", function () {",
 											"    pm.response.to.have.status(200);",
@@ -2645,6 +2672,7 @@
 								{
 									"listen": "prerequest",
 									"script": {
+										"id": "4c67e60a-1d5b-4f26-8432-b1882faa0e69",
 										"exec": [
 											"eval(pm.collectionVariables.get('preRequestSignatures'))"
 										],
@@ -2669,9 +2697,9 @@
 									}
 								],
 								"url": {
-									"raw": "{{gfranklinPaymentPointer}}/outgoing-payments/{{outgoingPaymentId}}",
+									"raw": "{{gfranklinWalletAddress}}/outgoing-payments/{{outgoingPaymentId}}",
 									"host": [
-										"{{gfranklinPaymentPointer}}"
+										"{{gfranklinWalletAddress}}"
 									],
 									"path": [
 										"outgoing-payments",
@@ -2693,6 +2721,7 @@
 								{
 									"listen": "test",
 									"script": {
+										"id": "77fd6462-24ec-4962-b6fc-94ca5e82bc35",
 										"exec": [
 											"const body = pm.response.json();",
 											"",
@@ -2713,8 +2742,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      paymentPointerUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": \"cross currency test\"\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 2,\n      \"value\": 500\n    },\n    \"paymentPointerUrl\": \"https://happy-life-bank-backend/accounts/pfry\"\n  }\n}"
+										"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      walletAddressUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": \"cross currency test\"\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"USD\",\n      \"assetScale\": 2,\n      \"value\": 500\n    },\n    \"walletAddressUrl\": \"https://happy-life-bank-backend/accounts/pfry\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -2751,9 +2780,9 @@
 										"id": "9a79a4d2-cc4b-4e62-8972-776be98fba47",
 										"exec": [
 											"",
-											"const getPaymentPointersQuery = `",
-											"query GetPaymentPointers {",
-											"    paymentPointers {",
+											"const getWalletAddressesQuery = `",
+											"query GetWalletAddresses {",
+											"    walletAddresses {",
 											"        edges {",
 											"            cursor",
 											"            node {",
@@ -2771,7 +2800,7 @@
 											"  body: {",
 											"    mode: 'graphql',",
 											"    graphql: {",
-											"        query:getPaymentPointersQuery",
+											"        query:getWalletAddressesQuery",
 											"    }",
 											"  }",
 											"};",
@@ -2779,9 +2808,9 @@
 											"",
 											"pm.sendRequest(postRequest, (error, response) => {",
 											"    const body = response.json();",
-											"    const gfranklinPaymentPointerId = body.data.paymentPointers.edges.map(e => e.node).find(node => node.publicName === 'Grace Franklin')?.id",
+											"    const gfranklinWalletAddressId = body.data.walletAddresses.edges.map(e => e.node).find(node => node.publicName === 'Grace Franklin')?.id",
 											"",
-											"    pm.collectionVariables.set(\"gfranklinPaymentPointerId\", gfranklinPaymentPointerId)",
+											"    pm.collectionVariables.set(\"gfranklinWalletAddressId\", gfranklinWalletAddressId)",
 											"});"
 										],
 										"type": "text/javascript"
@@ -2798,8 +2827,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"paymentPointerId\": \"{{gfranklinPaymentPointerId}}\",\n    \"receiver\": \"{{receiverId}}\"\n  }\n}"
+										"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"walletAddressId\": \"{{gfranklinWalletAddressId}}\",\n    \"receiver\": \"{{receiverId}}\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -2841,8 +2870,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"paymentPointerId\": \"{{gfranklinPaymentPointerId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
+										"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"walletAddressId\": \"{{gfranklinWalletAddressId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -2869,7 +2898,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    paymentPointerId\n    quote {\n      id\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
+										"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    walletAddressId\n    quote {\n      id\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
 										"variables": "{\n    \"id\": \"{{outgoingPaymentId}}\"\n}"
 									}
 								},
@@ -2918,8 +2947,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      paymentPointerUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": \"cross-currency\"\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"EUR\",\n      \"assetScale\": 2,\n      \"value\": 500\n    },\n    \"paymentPointerUrl\": \"https://happy-life-bank-backend/accounts/lars\"\n  }\n}"
+										"query": "mutation CreateReceiver($input: CreateReceiverInput!) {\n  createReceiver(input: $input) {\n    code\n    message\n    receiver {\n      completed\n      createdAt\n      expiresAt\n      metadata\n      id\n      incomingAmount {\n        assetCode\n        assetScale\n        value\n      }\n      walletAddressUrl\n      receivedAmount {\n        assetCode\n        assetScale\n        value\n      }\n      updatedAt\n    }\n    success\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"metadata\": {\n        \"description\": \"cross-currency\"\n    },\n    \"incomingAmount\": {\n      \"assetCode\": \"EUR\",\n      \"assetScale\": 2,\n      \"value\": 500\n    },\n    \"walletAddressUrl\": \"https://happy-life-bank-backend/accounts/lars\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -2956,9 +2985,9 @@
 										"id": "cc3ebb64-835d-4cd0-8e0f-4369049650de",
 										"exec": [
 											"",
-											"const getPaymentPointersQuery = `",
-											"query GetPaymentPointers {",
-											"    paymentPointers {",
+											"const getWalletAddressesQuery = `",
+											"query GetWalletAddresses {",
+											"    walletAddresses {",
 											"        edges {",
 											"            cursor",
 											"            node {",
@@ -2976,7 +3005,7 @@
 											"  body: {",
 											"    mode: 'graphql',",
 											"    graphql: {",
-											"        query:getPaymentPointersQuery",
+											"        query:getWalletAddressesQuery",
 											"    }",
 											"  }",
 											"};",
@@ -2984,9 +3013,9 @@
 											"",
 											"pm.sendRequest(postRequest, (error, response) => {",
 											"    const body = response.json();",
-											"    const gfranklinPaymentPointerId = body.data.paymentPointers.edges.map(e => e.node).find(node => node.publicName === 'Grace Franklin')?.id",
+											"    const gfranklinWalletAddressId = body.data.walletAddress.edges.map(e => e.node).find(node => node.publicName === 'Grace Franklin')?.id",
 											"",
-											"    pm.collectionVariables.set(\"gfranklinPaymentPointerId\", gfranklinPaymentPointerId)",
+											"    pm.collectionVariables.set(\"gfranklinWalletAddressId\", gfranklinWalletAddressId)",
 											"});"
 										],
 										"type": "text/javascript"
@@ -3003,8 +3032,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"paymentPointerId\": \"{{gfranklinPaymentPointerId}}\",\n    \"receiver\": \"{{receiverId}}\"\n  }\n}"
+										"query": "mutation CreateQuote($input: CreateQuoteInput!) {\n  createQuote(input: $input) {\n    code\n    message\n    quote {\n      createdAt\n      expiresAt\n      highEstimatedExchangeRate\n      id\n      lowEstimatedExchangeRate\n      maxPacketAmount\n      minExchangeRate\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n    }\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"walletAddressId\": \"{{gfranklinWalletAddressId}}\",\n    \"receiver\": \"{{receiverId}}\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -3046,8 +3075,8 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      paymentPointerId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
-										"variables": "{\n  \"input\": {\n    \"paymentPointerId\": \"{{gfranklinPaymentPointerId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
+										"query": "mutation CreateOutgoingPayment($input: CreateOutgoingPaymentInput!) {\n  createOutgoingPayment(input: $input) {\n    code\n    message\n    payment {\n      createdAt\n      error\n      metadata\n      id\n      walletAddressId\n      receiveAmount {\n        assetCode\n        assetScale\n        value\n      }\n      receiver\n      debitAmount {\n        assetCode\n        assetScale\n        value\n      }\n      sentAmount {\n        assetCode\n        assetScale\n        value\n      }\n      state\n      stateAttempts\n    }\n    success\n  }\n}",
+										"variables": "{\n  \"input\": {\n    \"walletAddressId\": \"{{gfranklinWalletAddressId}}\",\n    \"quoteId\": \"{{quoteId}}\"\n  }\n}"
 									}
 								},
 								"url": {
@@ -3074,7 +3103,7 @@
 								"body": {
 									"mode": "graphql",
 									"graphql": {
-										"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    paymentPointerId\n    quote {\n      id\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
+										"query": "query GetOutgoingPayment($id: String!) {\noutgoingPayment(id: $id) {\n    createdAt\n    error\n    metadata\n    id\n    walletAddressId\n    quote {\n      id\n    }\n    receiveAmount {\n      assetCode\n      assetScale\n      value\n    }\n    receiver\n    debitAmount {\n      assetCode\n      assetScale\n      value\n    }\n    sentAmount {\n      assetCode\n      assetScale\n      value\n    }\n    state\n    stateAttempts\n  }\n}",
 										"variables": "{\n    \"id\": \"{{outgoingPaymentId}}\"\n}"
 									}
 								},
@@ -3095,474 +3124,13 @@
 				}
 			],
 			"id": "b5d95158-8dde-456b-9ce5-8dbca3b5983c"
-		},
-		{
-			"name": "Demos",
-			"item": [
-				{
-					"name": "ILP Summit Demo",
-					"item": [
-						{
-							"name": "Grant Request Incoming Payment",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const body = pm.response.json();",
-											"pm.environment.set(\"accessToken\", body?.access_token?.value);",
-											"pm.environment.set(\"continueToken\", body.continue.access_token.value);",
-											"pm.environment.set(\"continueId\", body.continue.uri.split(\"/\").pop());",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "371d34ec-c8e7-4695-a2d3-15d866e04839",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"access_token\": {\n        \"access\": [\n            {\n                \"type\": \"incoming-payment\",\n                \"actions\": [\n                    \"create\", \"read\", \"list\", \"complete\"\n                ]\n            }\n        ]\n    },\n    \"client\": {\n        \"display\": {\n            \"name\": \"Shoe Shop\",\n            \"uri\": \"https://www.saagershoeshop.com\"\n        },\n        \"key\": {\n            \"proof\": \"httpsig\",\n            \"jwk\": {\n                \"alg\": \"EdDSA\",\n                \"kty\": \"OKP\",\n                \"use\": \"sig\",\n                \"crv\": \"Ed25519\",\n                \"kid\": \"http://fynbos/keys/12345\",\n                \"x\": \"jfiusdhvherui4vueurygygb8\"\n            }\n        }\n    },\n    \"interact\": {\n        \"start\": [\n            \"redirect\"\n        ],\n        \"finish\": {\n            \"method\": \"redirect\",\n            \"uri\": \"http://localhost:3030/mock-idp/fake-client\",\n            \"nonce\": \"123\"\n        }\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{BankOpenPaymentsAuthHost}}/",
-									"host": [
-										"{{BankOpenPaymentsAuthHost}}"
-									],
-									"path": [
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Incoming Payment",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											"pm.environment.set(\"tomorrow\", (new Date(new Date().setDate(new Date().getDate() + 1))).toISOString());"
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const body = pm.response.json();",
-											"pm.environment.set(\"incomingPaymentId\", body.id.split(\"/\").pop());",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "49ea498b-ee5f-46ad-aea9-466d2488b3b3",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "GNAP {{accessToken}}"
-									},
-									{
-										"key": "Host",
-										"value": "peer-backend"
-									},
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"incomingAmount\": {\n        \"value\": \"3364\",\n        \"assetCode\": \"USD\",\n        \"assetScale\": 2\n    },\n    \"expiresAt\": \"{{tomorrow}}\",\n    \"metadata\": {\n        \"description\": \"Purchase Shoe Shop\",\n        \"externalRef\": \"#INV2022-8363828\"\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{PhilipFryPaymentPointer}}/incoming-payments",
-									"host": [
-										"{{PhilipFryPaymentPointer}}"
-									],
-									"path": [
-										"incoming-payments"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Grant Request Quote + Outgoing Payment",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "1ea954c7-f395-45f8-b463-5dfd3a1e1466",
-										"exec": [
-											"const body = pm.response.json();",
-											"pm.environment.set(\"accessToken\", body?.access_token?.value);",
-											"pm.environment.set(\"continueToken\", body.continue.access_token.value);",
-											"pm.environment.set(\"continueId\", body.continue.uri.split(\"/\").pop());",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "27b8ddb1-a5c4-4be2-8ce9-ac94b49d15ab",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"access_token\": {\n        \"access\": [\n            {\n                \"type\": \"quote\",\n                \"actions\": [\n                    \"create\", \"read\"\n                ]\n            },\n            {\n                \"type\": \"outgoing-payment\",\n                \"actions\": [\n                    \"create\", \"read\", \"list\"\n                ],\n                \"identifier\": \"https://backend/accounts/gfranklin\",\n                \"limits\": {\n                    \"debitAmount\": {\n                        \"value\": \"3600\",\n                        \"assetCode\": \"USD\",\n                        \"assetScale\": 2\n                    },\n                    \"receiveAmount\": {\n                        \"value\": \"3364\",\n                        \"assetCode\": \"USD\",\n                        \"assetScale\": 2\n                    }\n                }\n            }\n        ]\n    },\n    \"client\": {\n        \"display\": {\n            \"name\": \"Shoe Shop\",\n            \"uri\": \"https://www.saagershoeshop.com\"\n        },\n        \"key\": {\n            \"proof\": \"httpsig\",\n            \"jwk\": {\n                \"alg\": \"EdDSA\",\n                \"kty\": \"OKP\",\n                \"use\": \"sig\",\n                \"crv\": \"Ed25519\",\n                \"kid\": \"http://fynbos/keys/12345\",\n                \"x\": \"jfiusdhvherui4vueurygygb8\"\n            }\n        }\n    },\n    \"interact\": {\n        \"start\": [\n            \"redirect\"\n        ],\n        \"finish\": {\n            \"method\": \"redirect\",\n            \"uri\": \"http://localhost:3030/mock-idp/fake-client\",\n            \"nonce\": \"456\"\n        }\n    }\n}\n",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{FynbosOpenPaymentsAuthHost}}/",
-									"host": [
-										"{{FynbosOpenPaymentsAuthHost}}"
-									],
-									"path": [
-										""
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Continuation Request",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const body = pm.response.json();",
-											"pm.environment.set(\"accessToken\", body.access_token.value);"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "11f3a23c-40b1-44cf-bbad-b4d38066934c",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "GNAP {{continueToken}}",
-										"type": "text"
-									},
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n     \"interact_ref\": \"a31b55bf-2d1e-44eb-b99e-0d98a1a953f4\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{FynbosOpenPaymentsAuthHost}}/continue/{{continueId}}",
-									"host": [
-										"{{FynbosOpenPaymentsAuthHost}}"
-									],
-									"path": [
-										"continue",
-										"{{continueId}}"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Quote",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const body = pm.response.json();",
-											"pm.environment.set(\"quoteId\", body.id.split(\"/\").pop());",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "21d8480d-f065-497c-a9fa-045c16f46733",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "GNAP {{accessToken}}",
-										"type": "text"
-									},
-									{
-										"key": "Host",
-										"value": "backend",
-										"type": "text"
-									},
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"receiver\": \"https://peer-backend/accounts/pfry/incoming-payments/{{incomingPaymentId}}\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{GraceFranklinPaymentPointer}}/quotes",
-									"host": [
-										"{{GraceFranklinPaymentPointer}}"
-									],
-									"path": [
-										"quotes"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Create Outgoing Payment",
-							"event": [
-								{
-									"listen": "prerequest",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								},
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 201\", function () {",
-											"    pm.response.to.have.status(201);",
-											"});",
-											"",
-											"const body = pm.response.json();",
-											"pm.environment.set(\"outgoingPaymentId\", body.id.split(\"/\").pop());",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "f6f5d366-057c-4c8d-bec8-b86e3f79e1fe",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "GNAP {{accessToken}}",
-										"type": "text"
-									},
-									{
-										"key": "Host",
-										"value": "backend",
-										"type": "text"
-									},
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"quoteId\": \"{{GraceFranklinPaymentPointer}}/quotes/{{quoteId}}\",\n    \"metadata\": {\n        \"description\": \"Your purchase at Shoe Shop\",\n        \"externalRef\": \"#INV2022-8363828\"\n    }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{GraceFranklinPaymentPointer}}/outgoing-payments",
-									"host": [
-										"{{GraceFranklinPaymentPointer}}"
-									],
-									"path": [
-										"outgoing-payments"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "Get Outgoing Payment",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"pm.test(\"Status code is 200\", function () {",
-											"    pm.response.to.have.status(200);",
-											"});",
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"id": "e8c919f3-dbee-4166-83f9-104d05878d82",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "GNAP {{accessToken}}",
-										"type": "text"
-									},
-									{
-										"key": "Host",
-										"value": "backend",
-										"type": "text"
-									},
-									{
-										"key": "Signature-Input",
-										"value": "TODO",
-										"type": "text"
-									},
-									{
-										"key": "Signature",
-										"value": "TODO",
-										"type": "text"
-									}
-								],
-								"url": {
-									"raw": "{{GraceFranklinPaymentPointer}}/outgoing-payments/{{outgoingPaymentId}}",
-									"host": [
-										"{{GraceFranklinPaymentPointer}}"
-									],
-									"path": [
-										"outgoing-payments",
-										"{{outgoingPaymentId}}"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"id": "8cccb4b3-0088-467c-8a2d-f9233db2d019"
-				}
-			],
-			"id": "cb1b9eeb-aa1e-45cd-a93d-da8786aa2ba9"
 		}
 	],
 	"event": [
 		{
 			"listen": "prerequest",
 			"script": {
-				"id": "bbb00c25-aa21-4b39-bc93-45f8785249e5",
+				"id": "d9522e53-e5c6-40dd-bc77-076f1067d185",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3572,7 +3140,7 @@
 		{
 			"listen": "test",
 			"script": {
-				"id": "4e0e42f6-0f71-404f-a772-27a285fc29ee",
+				"id": "e4e1d1a9-db5b-4955-9fa0-0692dca69117",
 				"type": "text/javascript",
 				"exec": [
 					""
@@ -3582,221 +3150,221 @@
 	],
 	"variable": [
 		{
-			"id": "4ee6dea3-c780-409d-af41-ec0c7344c83f",
+			"id": "b7ed356d-9920-4a71-842b-5282ff16b77a",
 			"key": "OpenPaymentsHost",
 			"value": "http://localhost:3000"
 		},
 		{
-			"id": "346e5927-9aeb-4475-b6d3-7eeebcf0ef1c",
+			"id": "33fe5427-58c8-4085-ab5e-7b6a215f79e5",
 			"key": "PeerOpenPaymentsHost",
 			"value": "http://localhost:4000"
 		},
 		{
-			"id": "496e3b8e-12ed-44ac-b639-70e885797194",
+			"id": "d462e0a5-a3c2-446c-bd31-ea3bdda89969",
 			"key": "OpenPaymentsAuthHost",
 			"value": "http://localhost:3006"
 		},
 		{
-			"id": "89fe5e25-e9af-49bc-b7e9-c60863458f21",
+			"id": "6ff4b14a-a38d-41d2-9613-912629bf3df2",
 			"key": "PeerOpenPaymentsAuthHost",
 			"value": "http://localhost:4006"
 		},
 		{
-			"id": "787a43bd-09ed-40e8-81a0-56a93eff3eaf",
+			"id": "db993544-0513-401a-ab18-17e390da25f3",
 			"key": "RafikiGraphqlHost",
 			"value": "http://localhost:3001"
 		},
 		{
-			"id": "f013914a-0126-4f29-ba38-20b00f50afc0",
+			"id": "7c34a4e0-b241-4293-9f08-de24ec7404f8",
 			"key": "RafikiAuthGraphqlHost",
 			"value": "http://localhost:3003",
 			"type": "string"
 		},
 		{
-			"id": "44a6339c-d2a5-43b3-baa5-3fac0293e62a",
+			"id": "fd45d1a8-74eb-4837-9211-96d28d657634",
 			"key": "PeerGraphqlHost",
 			"value": "http://localhost:4001"
 		},
 		{
-			"id": "fd5857c3-522e-482b-b2ab-868a8d3df2dd",
+			"id": "fe2380d2-5ee9-4f09-a6cb-347a84edffe4",
 			"key": "PeerAuthGraphqlHost",
 			"value": "http://localhost:4003",
 			"type": "string"
 		},
 		{
-			"id": "d9e28ccc-4e81-46a6-a469-8543514cf5ba",
+			"id": "a128dd0a-54e3-444e-8f7b-8f9b8bb009d2",
 			"key": "SignatureHost",
 			"value": "http://localhost:3040"
 		},
 		{
-			"id": "bcf10d43-89be-4d8e-ae82-840a8dad5bad",
+			"id": "398529df-0505-443a-b52c-e03c17803763",
 			"key": "PeerSignatureHost",
 			"value": "http://localhost:3041"
 		},
 		{
-			"id": "5c9bcd71-3b6b-46cb-b61b-94e9d275aaf2",
-			"key": "gfranklinPaymentPointer",
+			"id": "71a17cb9-41c6-42ee-99f7-0d31050baa8b",
+			"key": "gfranklinWalletAddress",
 			"value": "http://localhost:3000/accounts/gfranklin"
 		},
 		{
-			"id": "004fb735-6127-4cfe-971f-c5ba3b2db4c4",
-			"key": "asmithPaymentPointer",
+			"id": "f7bfc3d0-4601-4869-a760-f76cd7902e7c",
+			"key": "asmithWalletAddress",
 			"value": "http://localhost:4000/accounts/asmith",
 			"type": "string"
 		},
 		{
-			"id": "e5037a18-1e62-41cd-b98b-18efec927470",
-			"key": "gfranklinPaymentPointerId",
+			"id": "d968802c-2f4c-44cb-bba0-b71dba558d14",
+			"key": "gfranklinWalletAddressId",
 			"value": "6abd8671-72d0-41ee-8e0a-0b28eff522a5",
 			"type": "string"
 		},
 		{
-			"id": "6459f543-714b-470c-b31a-216f4a135a67",
-			"key": "pfryPaymentPointer",
+			"id": "073e40f4-b6d4-4ab5-9134-df3a026f1269",
+			"key": "pfryWalletAddress",
 			"value": "http://localhost:4000/accounts/pfry"
 		},
 		{
-			"id": "7ae91d54-b4fd-48fe-8c7d-f314cb68e1f3",
+			"id": "5ac5a7f2-8dd6-46e0-babc-373d72555d7a",
 			"key": "accessToken",
 			"value": "example-access-token"
 		},
 		{
-			"id": "e5aaf38c-b48a-440d-ace4-2e56d4875eef",
-			"key": "paymentPointerId",
+			"id": "5406f823-82cc-4bb9-bd4b-8644fd0792c7",
+			"key": "walletAddressId",
 			"value": "bde8da93-9bff-4251-90ce-abb15e7d444c"
 		},
 		{
-			"id": "683684e7-85b5-4e92-bc1a-8dcbb3056723",
+			"id": "37b28290-e21a-42b4-a193-dd5dbbb88078",
 			"key": "incomingPaymentId",
 			"value": "dc7b71a5-d78e-450c-b4c5-7db299f2a133"
 		},
 		{
-			"id": "ee9a05f9-acf7-4fad-8725-2ff86f53f0a1",
+			"id": "e388c871-9167-4e1b-b06e-5b4bad5cb6c3",
 			"key": "connectionId",
 			"value": "23de6081-b340-4334-b335-a2328bbb3334"
 		},
 		{
-			"id": "55d07b63-d5a9-499d-bf84-40f0132dcee8",
+			"id": "ed67784c-96c6-49c1-b9eb-a5057b3274f3",
 			"key": "outgoingPaymentId",
 			"value": "empty"
 		},
 		{
-			"id": "a39653ef-9502-4378-9705-a4729d7757fd",
+			"id": "df8d34fd-2ab2-4d44-a6c8-d63fd0a6d44a",
 			"key": "quoteId",
 			"value": "http://backend/d982ab2f-4380-4d05-be3b-43d23a57d23f/quotes/8adaa7f9-fbd2-4cc2-89b5-6f354d68728e"
 		},
 		{
-			"id": "319b27c4-765f-4138-adc4-9e15016ac28d",
+			"id": "899a5567-f33c-407d-8ee8-477bb2d1fe8a",
 			"key": "tokenId",
 			"value": "f6cf615c-70e8-4b04-bd86-0d6ac41a4c85"
 		},
 		{
-			"id": "6a520e93-7fc1-4dc5-bbbc-aa56a28b13f3",
+			"id": "73451c9d-58db-4300-ba29-083b7431c469",
 			"key": "tomorrow",
 			"value": ""
 		},
 		{
-			"id": "3a5918fa-3822-4399-9dc7-cdec6464c46b",
-			"key": "uniquePaymentPointer",
+			"id": "945aaea0-bd8e-4e3e-b782-a1edfa140e94",
+			"key": "uniqueWalletAddress",
 			"value": ""
 		},
 		{
-			"id": "aef2f78a-551c-45e2-981d-30fb35059693",
+			"id": "465d0042-f81a-4830-9b34-483618d3d1d5",
 			"key": "quoteUrl",
 			"value": ""
 		},
 		{
-			"id": "e5460cae-87e6-4608-ae55-d7d897f7cb38",
+			"id": "0aacc137-1375-489e-8727-4fde3ed8607a",
 			"key": "incomingPaymentUrl",
 			"value": ""
 		},
 		{
-			"id": "c79c3e36-ea19-4a26-ac04-87bb1476c462",
+			"id": "19db9a2f-1f89-41f5-8a69-df227e3fb77b",
 			"key": "continueToken",
 			"value": ""
 		},
 		{
-			"id": "565e679c-ae68-428e-8b97-d936ebc83aaa",
+			"id": "c02e3771-d53f-481a-ab44-292df15884d6",
 			"key": "continueId",
 			"value": ""
 		},
 		{
-			"id": "ecc46a5b-91c0-4661-ab34-dc7ecd902d8e",
-			"key": "paymentPointerUrl",
+			"id": "fabf8a5e-f7c0-413c-9d75-04d3eda63e78",
+			"key": "walletAddressUrl",
 			"value": ""
 		},
 		{
-			"id": "fbac2b60-3775-4a36-88e7-7f6b1900d35c",
-			"key": "createPaymentPointerRequest",
+			"id": "c61ab49b-05d3-4001-a9d8-a1e6dfa5571f",
+			"key": "createWalletAddressRequest",
 			"value": ""
 		},
 		{
-			"id": "3ea240c0-b03d-449e-b341-a97550e5fbf9",
-			"key": "secondPaymentPointerId",
+			"id": "0e80fa69-a93c-44be-ad62-58d888713801",
+			"key": "secondWalletAddressId",
 			"value": ""
 		},
 		{
-			"id": "b3a7868b-af13-4550-846c-36950086c90d",
+			"id": "a6cf3ab5-1ee4-4a39-9e13-53a694357255",
 			"key": "assetId",
 			"value": ""
 		},
 		{
-			"id": "79893faa-4c7d-4555-b8a7-6440a9baa774",
+			"id": "8523c0a5-a3c4-4100-9500-6dc607fd8145",
 			"key": "preRequestSignatures",
 			"value": "const requestUrl = request.url\n  .replace(/{{([A-Za-z]\\w+)}}/g, (_, key) => pm.collectionVariables.get(key))\n  .replace(/localhost:([3,4])000/g, (_, key) =>\n    key === '3' ? 'cloud-nine-wallet-backend' : 'happy-life-bank-backend'\n  )\nconst requestBody =\n  request.method === 'POST' && Object.keys(request.data).length !== 0\n    ? request.data.replace(/{{([A-Za-z]\\w+)}}/g, (_, key) =>\n        pm.collectionVariables.get(key)\n      )\n    : undefined\nconst requestHeaders = JSON.parse(\n  JSON.stringify(request.headers).replace(/{{([A-Za-z]\\w+)}}/g, (_, key) =>\n    pm.collectionVariables.get(key)\n  )\n)\n// Request Signature Headers\npm.sendRequest(\n  {\n    url: pm.collectionVariables.get('signatureUrl'),\n    method: 'POST',\n    header: {\n      'content-type': 'application/json'\n    },\n    body: {\n      mode: 'raw',\n      raw: JSON.stringify({\n        keyId: pm.collectionVariables.get('keyId'),\n        request: {\n          url: requestUrl,\n          method: request.method,\n          headers: requestHeaders,\n          body: requestBody\n        }\n      })\n    }\n  },\n  (_, res) => {\n    const headers = res.json()\n    for (let [key, value] of Object.entries(headers)) {\n      pm.request.headers.add({ key, value })\n    }\n  }\n)\n"
 		},
 		{
-			"id": "9b94ec03-326c-4890-949b-e88a5d5dd2d3",
+			"id": "b893e98e-07d5-4e4e-8853-9a60cc1a0f46",
 			"key": "preRequestSignaturesGrantRequest",
 			"value": "const url = require('url')\n\nconst body = JSON.parse(request.data)\nconst client = url.parse(body.client)\nconst jwkUrl = `http://localhost:${\n  client.host === 'cloud-nine-wallet-backend' ? '3' : '4'\n}000${client.path}/jwks.json`\npm.collectionVariables.set(\n  'signatureUrl',\n  pm.collectionVariables.get(\n    client.host === 'cloud-nine-wallet-backend'\n      ? 'SignatureHost'\n      : 'PeerSignatureHost'\n  )\n)\n\nconst requestUrl = request.url.replace(/{{([A-Za-z]\\w+)}}/g, (_, key) =>\n  pm.collectionVariables.get(key)\n)\nconst requestBody = request.data.replace(/{{([A-Za-z]\\w+)}}/g, (_, key) =>\n  pm.collectionVariables.get(key)\n)\nconst requestHeaders = JSON.parse(\n  JSON.stringify(request.headers).replace(/{{([A-Za-z]\\w+)}}/g, (_, key) =>\n    pm.collectionVariables.get(key)\n  )\n)\n\n// Request Client JWK\npm.sendRequest(\n  {\n    url: jwkUrl,\n    method: 'GET',\n    header: {\n      Host: client.host\n    }\n  },\n  (err, res) => {\n    const keys = res.json()\n    pm.collectionVariables.set('keyId', keys.keys[0].kid)\n\n    // Request Signature Headers\n    pm.sendRequest(\n      {\n        url: pm.collectionVariables.get('signatureUrl'),\n        method: 'POST',\n        header: {\n          'content-type': 'application/json'\n        },\n        body: {\n          mode: 'raw',\n          raw: JSON.stringify({\n            keyId: pm.collectionVariables.get('keyId'),\n            request: {\n              url: requestUrl,\n              method: request.method,\n              headers: requestHeaders,\n              body: requestBody\n            }\n          })\n        }\n      },\n      (_, res) => {\n        const headers = res.json()\n        for (let [key, value] of Object.entries(headers)) {\n          pm.request.headers.add({ key, value })\n        }\n      }\n    )\n  }\n)\n"
 		},
 		{
-			"id": "e3c9ec7a-4390-4060-8868-1d32e04aa2cf",
+			"id": "2e45d372-4a5a-4fb2-8fe4-27626b8dd327",
 			"key": "signatureUrl",
 			"value": ""
 		},
 		{
-			"id": "c228e981-36da-4033-8015-4eacfad854a3",
+			"id": "a4e808e7-ab8f-46f1-8003-f25fb894f130",
 			"key": "keyId",
 			"value": ""
 		},
 		{
-			"id": "3ca5880b-b386-430b-9f27-eea5ebfbfb1e",
+			"id": "3dad9f5f-b8f2-4d68-bc1f-01a3cd917a35",
 			"key": "peerId",
 			"value": ""
 		},
 		{
-			"id": "2322ddf9-43f0-41a6-b515-2a9258825f5b",
-			"key": "paymentPointerKeyId",
+			"id": "28648a8f-8d64-446c-b775-57357e32f561",
+			"key": "walletAddressKeyId",
 			"value": ""
 		},
 		{
-			"id": "ec874c4d-cd4b-454a-9e1b-d9b5a76f113c",
+			"id": "ad451774-cdef-462b-be77-d0c399ed3b86",
 			"key": "secureOpenPaymentsHost",
 			"value": ""
 		},
 		{
-			"id": "d4170010-6447-4fef-b08d-84ca0f9885bb",
+			"id": "2e2f4181-bda4-4513-bc3d-ce5e30270a67",
 			"key": "tokenManagementUrl",
 			"value": ""
 		},
 		{
-			"id": "988e93e1-8d51-42bd-94f9-460cc024b8fc",
+			"id": "2dfc1779-b7f2-4051-9d6c-c287a17a9642",
 			"key": "quoteDebitAmountValue",
 			"value": ""
 		},
 		{
-			"id": "49636fb9-26d7-4238-98a5-1e4ba13b018a",
+			"id": "05a9a4aa-79f0-4d55-8bc1-849fca735d4c",
 			"key": "quoteReceiveAmountValue",
 			"value": ""
 		},
 		{
-			"id": "b3bc3f0c-da96-4ec8-a0eb-c822bbe7fd6c",
+			"id": "8eada749-fefd-4065-b6ec-9facc914fa6c",
 			"key": "idempotencyKey",
 			"value": ""
 		},
 		{
-			"id": "493478f0-6ea2-4f69-bc5e-a27cbb0122d5",
+			"id": "a5bb08fc-c591-4758-bef1-cd9ebe01f9e9",
 			"key": "receiverId",
 			"value": ""
 		}
