@@ -139,7 +139,7 @@ export function initIocContainer(
       logger,
       keyId: config.keyId,
       privateKey: config.privateKey,
-      paymentPointerUrl: config.walletAddressUrl
+      walletAddressUrl: config.walletAddressUrl
     })
   })
   container.singleton('tokenIntrospectionClient', async (deps) => {

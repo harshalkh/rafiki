@@ -37,7 +37,7 @@ describe('SPSP Middleware', (): void => {
     await appContainer.shutdown()
   })
 
-  describe('Payment Pointer', (): void => {
+  describe('Wallet Address', (): void => {
     let ctx: SPSPWalletAddressContext
 
     beforeEach(async (): Promise<void> => {
