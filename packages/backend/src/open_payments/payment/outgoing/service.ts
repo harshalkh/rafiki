@@ -392,6 +392,15 @@ async function fundPayment(
       return error
     }
     await payment.$query(trx).patch({ state: OutgoingPaymentState.Sending })
+
+    console.log(
+      'HERE ---------------------------####################---------------'
+    )
+    console.log('service exists', deps.telemetryService)
+    console.log(
+      'counter exists',
+      deps.telemetryService?.getCounter(Metrics.TRANSACTIONS_TOTAL)
+    )
     deps.telemetryService?.getCounter(Metrics.TRANSACTIONS_TOTAL)?.add(1)
     return await addSentAmount(deps, payment)
   })

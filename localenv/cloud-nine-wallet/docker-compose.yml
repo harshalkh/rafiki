@@ -56,7 +56,7 @@ services:
       REDIS_URL: redis://shared-redis:6379/0
       PAYMENT_POINTER_URL: https://cloud-nine-wallet-backend/.well-known/pay
       ENABLE_TELEMETRY: true
-      OPEN_TELEMETRY_COLLECTOR_URL: http://cloud-nine-otel-collector:4316
+      OPEN_TELEMETRY_COLLECTOR_URL: http://cloud-nine-otel-collector:4317
       OPEN_TELEMETRY_EXPORT_INTERVAL: 60000
     depends_on:
       - shared-database
@@ -139,9 +139,18 @@ services:
     networks:
       - rafiki
     ports:
-      - "8887:8888"   # Prometheus metrics exposed by the collector
-      - "13132:13133" # health_check extension
-      - "4316:4317"   # OTLP gRPC receiver
+    - "1888:1888"   # pprof extension
+    - "8888:8888"   # Prometheus metrics exposed by the collector
+    - "8889:8889"   # Prometheus exporter metrics
+    - "13133:13133" # health_check extension
+    - "4317:4317"   # OTLP gRPC receiver
+    - "55679:55679" # zpages extension
+    - "4318:4318"
+
+
+      # - "8887:8888"   # Prometheus metrics exposed by the collector
+      # - "13132:13133" # health_check extension
+      # - "4316:4317"   # OTLP gRPC receiver
 
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
