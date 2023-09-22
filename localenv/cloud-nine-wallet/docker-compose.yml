@@ -128,7 +128,7 @@ services:
       OPEN_PAYMENTS_URL: https://cloud-nine-wallet-backend/
     depends_on:
       - cloud-nine-backend
-  happy-life-otel-collector:
+  cloud-nine-otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml", ""]
     environment:
