@@ -13,6 +13,8 @@ export interface LiquidityAccount {
   id: string
   asset: {
     id: string
+    code?: string
+    scale?: number
     ledger: number
     onDebit?: (options: OnDebitOptions) => Promise<LiquidityAccount>
   }
@@ -179,6 +181,10 @@ export async function createAccountToAccountTransfer(
           totalReceived,
           withdrawalThrottleDelay
         })
+
+        console.log('Accounting amount: ', totalReceived)
+        console.log('Accounting asset code: ', destinationAccount.asset.code)
+        console.log('Accounting asset scale: ', destinationAccount.asset.scale)
       }
     },
     void: async (): Promise<void | TransferError> => {
