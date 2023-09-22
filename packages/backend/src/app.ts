@@ -263,16 +263,18 @@ export class App {
         process.nextTick(() => this.processWebhook())
       }
     }
-    console.log('enabledTelemetry', this.config.enableTelemetry)
-    this.logger.info('enabledTelemetry', this.config.enableTelemetry)
-    if (this.config.enableTelemetry) {
-      const telemetry = await this.container.use('telemetry')
-      setInterval(() => {
-        console.log('telemetry counter pop')
-        this.logger.info('telemetry counter pop')
-        telemetry.getCounter('test')?.add(1)
-      }, 2000)
-    }
+
+    // Test telemetry
+    // console.log('enabledTelemetry', this.config.enableTelemetry)
+    // this.logger.info('enabledTelemetry', this.config.enableTelemetry)
+    // if (this.config.enableTelemetry) {
+    //   const telemetry = await this.container.use('telemetry')
+    //   setInterval(() => {
+    //     console.log('telemetry counter pop')
+    //     this.logger.info('telemetry counter pop')
+    //     telemetry.getCounter('test')?.add(1)
+    //   }, 2000)
+    // }
   }
 
   public async startAdminServer(port: number): Promise<void> {
