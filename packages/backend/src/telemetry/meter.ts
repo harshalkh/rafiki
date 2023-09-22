@@ -61,7 +61,7 @@ class TelemetryServiceImpl implements TelemetryService {
       description: 'Count of funded transactions'
     })
 
-    this.createCounter('test', { description: 'test' })
+    // this.createCounter('test', { description: 'test' })
   }
 
   private createCounter(
