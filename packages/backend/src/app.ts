@@ -56,10 +56,7 @@ import {
 } from './open_payments/payment/outgoing/routes'
 import { OutgoingPaymentService } from './open_payments/payment/outgoing/service'
 import { IlpPlugin, IlpPluginOptions } from './shared/ilp_plugin'
-import {
-  createValidatorMiddleware,
-  HttpMethod
-} from '@interledger/openapi'
+import { createValidatorMiddleware, HttpMethod } from '@interledger/openapi'
 import { WalletAddressKeyService } from './open_payments/wallet_address/key/service'
 import {
   AccessAction,
