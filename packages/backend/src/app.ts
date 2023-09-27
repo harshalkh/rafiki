@@ -264,17 +264,16 @@ export class App {
       }
     }
 
-    // Test telemetry
-    // console.log('enabledTelemetry', this.config.enableTelemetry)
-    // this.logger.info('enabledTelemetry', this.config.enableTelemetry)
-    // if (this.config.enableTelemetry) {
-    //   const telemetry = await this.container.use('telemetry')
-    //   setInterval(() => {
-    //     console.log('telemetry counter pop')
-    //     this.logger.info('telemetry counter pop')
-    //     telemetry.getCounter('test')?.add(1)
-    //   }, 2000)
-    // }
+    // let counter = 0
+    // const telemetry = await this.container.use('telemetry')
+    // setInterval(() => {
+    //   counter++
+    //   console.log(
+    //     `HERE ---------------------------####################---------------`
+    //   )
+    //   console.log(`counter: ${counter}`)
+    //   telemetry.getCounter('test')?.add(1)
+    // }, 10000)
   }
 
   public async startAdminServer(port: number): Promise<void> {

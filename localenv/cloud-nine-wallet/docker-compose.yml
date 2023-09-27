@@ -58,6 +58,7 @@ services:
       ENABLE_TELEMETRY: true
       OPEN_TELEMETRY_COLLECTOR_URL: http://cloud-nine-otel-collector:4317
       OPEN_TELEMETRY_EXPORT_INTERVAL: 60000
+      TELEMETRY_SERVICE_NAME: CLOUD-NINE
     depends_on:
       - shared-database
       - shared-redis
@@ -138,19 +139,10 @@ services:
       - ../collector/otel-collector-config.yaml:/etc/otel-collector-config.yaml
     networks:
       - rafiki
+    expose:
+      - 4317
     ports:
-    - "1888:1888"   # pprof extension
-    - "8888:8888"   # Prometheus metrics exposed by the collector
-    - "8889:8889"   # Prometheus exporter metrics
-    - "13133:13133" # health_check extension
-    - "4317:4317"   # OTLP gRPC receiver
-    - "55679:55679" # zpages extension
-    - "4318:4318"
-
-
-      # - "8887:8888"   # Prometheus metrics exposed by the collector
-      # - "13132:13133" # health_check extension
-      # - "4316:4317"   # OTLP gRPC receiver
+    - "13133:13133" # health_check extension 
 
 volumes:
   database-data: # named volumes can be managed easier using docker-compose

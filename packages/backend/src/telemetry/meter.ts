@@ -27,6 +27,7 @@ interface TelemetryServiceDependencies extends BaseService {
 
 export enum Metrics {
   TRANSACTIONS_TOTAL = 'transactions_total'
+  // TEST = 'test'
 }
 
 export function createTelemetryService(
@@ -39,6 +40,11 @@ class TelemetryServiceImpl implements TelemetryService {
   private counters = new Map()
   constructor(private deps: TelemetryServiceDependencies) {
     diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG)
+
+    console.log(
+      `serviceName: ${deps.serviceName}, collectorUrl: ${deps.collectorUrl} }`
+    )
+
     const meterProvider = new MeterProvider({
       resource: new Resource({ 'service.name': deps.serviceName ?? 'Rafiki' })
     })
