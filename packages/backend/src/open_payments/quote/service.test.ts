@@ -119,9 +119,7 @@ describe('QuoteService', (): void => {
       createModel: ({ client }) =>
         createQuote(deps, {
           walletAddressId: sendingWalletAddress.id,
-          receiver: `${
-            receivingWalletAddress.url
-          }/incoming-payments/${uuid()}`,
+          receiver: `${receivingWalletAddress.url}/incoming-payments/${uuid()}`,
           debitAmount: {
             value: BigInt(56),
             assetCode: asset.code,
@@ -382,9 +380,7 @@ describe('QuoteService', (): void => {
       await expect(
         quoteService.create({
           walletAddressId: uuid(),
-          receiver: `${
-            receivingWalletAddress.url
-          }/incoming-payments/${uuid()}`,
+          receiver: `${receivingWalletAddress.url}/incoming-payments/${uuid()}`,
           debitAmount
         })
       ).resolves.toEqual(QuoteError.UnknownWalletAddress)
@@ -399,9 +395,7 @@ describe('QuoteService', (): void => {
       await expect(
         quoteService.create({
           walletAddressId: walletAddress.id,
-          receiver: `${
-            receivingWalletAddress.url
-          }/incoming-payments/${uuid()}`,
+          receiver: `${receivingWalletAddress.url}/incoming-payments/${uuid()}`,
           debitAmount
         })
       ).resolves.toEqual(QuoteError.InactiveWalletAddress)
@@ -411,9 +405,7 @@ describe('QuoteService', (): void => {
       await expect(
         quoteService.create({
           walletAddressId: sendingWalletAddress.id,
-          receiver: `${
-            receivingWalletAddress.url
-          }/incoming-payments/${uuid()}`,
+          receiver: `${receivingWalletAddress.url}/incoming-payments/${uuid()}`,
           debitAmount
         })
       ).resolves.toEqual(QuoteError.InvalidReceiver)

@@ -7,11 +7,7 @@ import { Quote } from './model'
 import { Amount } from '../amount'
 import { ReceiverService } from '../receiver/service'
 import { Receiver } from '../receiver/model'
-import {
-  WalletAddress,
-  GetOptions,
-  ListOptions
-} from '../wallet_address/model'
+import { WalletAddress, GetOptions, ListOptions } from '../wallet_address/model'
 import {
   WalletAddressService,
   WalletAddressSubresourceService
