@@ -3,6 +3,7 @@ import {
   DiagConsoleLogger,
   DiagLogLevel,
   MetricOptions,
+  ValueType,
   diag,
   metrics
 } from '@opentelemetry/api'
@@ -26,8 +27,8 @@ interface TelemetryServiceDependencies extends BaseService {
 }
 
 export enum Metrics {
-  TRANSACTIONS_TOTAL = 'transactions_total'
-  // TEST = 'test'
+  TRANSACTIONS_TOTAL = 'transactions_total',
+  TRANSACTIONS_AMOUNT = 'transactions_amount'
 }
 
 export function createTelemetryService(
@@ -67,7 +68,15 @@ class TelemetryServiceImpl implements TelemetryService {
       description: 'Count of funded transactions'
     })
 
-    // this.createCounter('test', { description: 'test' })
+    this.createCounter(Metrics.TRANSACTIONS_AMOUNT, {
+      description:
+        'Amount sent through the network. Asset Code & Asset Scale are sent as attributes',
+      valueType: ValueType.DOUBLE
+    })
+
+    this.createCounter(Metrics.TRANSACTIONS_TOTAL, {
+      description: 'Count of funded transactions'
+    })
   }
 
   private createCounter(

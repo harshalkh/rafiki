@@ -55,7 +55,7 @@ services:
       ENABLE_TELEMETRY: true
       OPEN_TELEMETRY_COLLECTOR_URL: http://happy-life-otel-collector:4317
       OPEN_TELEMETRY_EXPORT_INTERVAL: 60000
-      TELEMETRY_SERVICE_NAME: HAPPY-LIFE
+      TELEMETRY_SERVICE_NAME: RAFIKI
 
     depends_on:
       - cloud-nine-backend

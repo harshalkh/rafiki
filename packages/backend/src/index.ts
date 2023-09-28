@@ -46,7 +46,7 @@ import { createCombinedPaymentService } from './open_payments/payment/combined/s
 import { createFeeService } from './fee/service'
 import { createAutoPeeringService } from './auto-peering/service'
 import { createAutoPeeringRoutes } from './auto-peering/routes'
-import { createTelemetryService } from './telemetry/meter'
+import { TelemetryService, createTelemetryService } from './telemetry/meter'
 
 BigInt.prototype.toJSON = function () {
   return this.toString()
@@ -189,11 +189,16 @@ export function initIocContainer(
     const logger = await deps.use('logger')
     const knex = await deps.use('knex')
     const config = await deps.use('config')
+    let telemetry: TelemetryService | undefined
+    if (config.enableTelemetry) {
+      telemetry = await deps.use('telemetry')
+    }
 
     if (config.useTigerbeetle) {
       const tigerbeetle = await deps.use('tigerbeetle')
 
       return createTigerbeetleAccountingService({
+        telemetry,
         logger,
         knex,
         tigerbeetle,
@@ -202,6 +207,7 @@ export function initIocContainer(
     }
 
     return createPsqlAccountingService({
+      telemetry,
       logger,
       knex,
       withdrawalThrottleDelay: config.withdrawalThrottleDelay
