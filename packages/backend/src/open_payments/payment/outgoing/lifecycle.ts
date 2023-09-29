@@ -152,6 +152,7 @@ const handleCompleted = async (
   await payment.$query(deps.knex).patch({
     state: OutgoingPaymentState.Completed
   })
+
   await sendWebhookEvent(deps, payment, PaymentEventType.PaymentCompleted)
 }
 

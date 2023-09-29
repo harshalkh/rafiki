@@ -81,6 +81,7 @@ import { AutoPeeringService } from './auto-peering/service'
 import { AutoPeeringRoutes } from './auto-peering/routes'
 import { Rafiki as ConnectorApp } from './connector/core'
 import { AxiosInstance } from 'axios'
+import { TelemetryService } from './telemetry/meter'
 
 export interface AppContextData {
   logger: Logger
@@ -189,6 +190,7 @@ const PAYMENT_POINTER_PATH = '/:paymentPointerPath+'
 
 export interface AppServices {
   logger: Promise<Logger>
+  telemetry: Promise<TelemetryService>
   knex: Promise<Knex>
   axios: Promise<AxiosInstance>
   config: Promise<IAppConfig>
@@ -263,6 +265,17 @@ export class App {
         process.nextTick(() => this.processWebhook())
       }
     }
+
+    // let counter = 0
+    // const telemetry = await this.container.use('telemetry')
+    // setInterval(() => {
+    //   counter++
+    //   console.log(
+    //     `HERE ---------------------------####################---------------`
+    //   )
+    //   console.log(`counter: ${counter}`)
+    //   telemetry.getCounter('test')?.add(1)
+    // }, 10000)
   }
 
   public async startAdminServer(port: number): Promise<void> {
