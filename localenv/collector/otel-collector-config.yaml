@@ -1,8 +1,8 @@
 extensions:
   sigv4auth:
     assume_role:
-      arn: "arn:aws:iam::145795521759:role/PrometheusRemoteWrite"
-      sts_region: "eu-west-2"
+      arn: 'arn:aws:iam::145795521759:role/PrometheusRemoteWrite'
+      sts_region: 'eu-west-2'
 
 receivers:
   otlp:
@@ -19,23 +19,22 @@ processors:
 
 exporters:
   logging:
-    verbosity: "normal"
+    verbosity: 'normal'
   prometheusremotewrite:
-    endpoint: "https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-7c8fd050-cb3b-451f-9971-1e6099db2e8f/api/v1/remote_write"
+    endpoint: 'https://aps-workspaces.eu-west-2.amazonaws.com/workspaces/ws-7c8fd050-cb3b-451f-9971-1e6099db2e8f/api/v1/remote_write'
     auth:
       authenticator: sigv4auth
-   
 
 service:
   telemetry:
     logs:
-      level: "debug"
+      level: 'debug'
     metrics:
-      level: "detailed"
+      level: 'detailed'
       address: 0.0.0.0:8888
   extensions: [sigv4auth]
   pipelines:
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging,prometheusremotewrite]
+      exporters: [logging, prometheusremotewrite]
