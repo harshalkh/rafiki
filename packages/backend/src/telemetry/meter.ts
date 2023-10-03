@@ -73,10 +73,6 @@ class TelemetryServiceImpl implements TelemetryService {
         'Amount sent through the network. Asset Code & Asset Scale are sent as attributes',
       valueType: ValueType.DOUBLE
     })
-
-    this.createCounter(Metrics.TRANSACTIONS_TOTAL, {
-      description: 'Count of funded transactions'
-    })
   }
 
   private createCounter(
